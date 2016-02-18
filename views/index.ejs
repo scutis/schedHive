@@ -7,9 +7,29 @@
     <body>
         <p>Welcome <%= username %></p>
 
+        <input type='text' id='search' placeholder='Search...'>
+        <span id='result'></span><br>
+        <p><a href='/logout'>Logout</a></p>
+
         <script src="/socket.io/socket.io.js"></script>
         <script>
             var socket = io.connect('http://localhost:3000');
+        </script>
+
+        <script src="javascripts/jquery.js"></script>
+        <script>
+            $(function() {
+                $('#search').keyup(function(){
+                    var input = $(this).val();
+                    if (input != "") {
+                        $.post('/search', {search: input}, function (res) {
+                            $('#result').html(res);
+                        });
+                    }else{
+                        $('#result').html("Suggestions: none");
+                    }
+                });
+            });
         </script>
     </body>
 </html>
