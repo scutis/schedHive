@@ -6,10 +6,19 @@
     </head>
     <body>
         <p>Welcome <%= username %></p>
-
-        <input type='text' id='search' placeholder='Search...'>
-        <span id='result'></span><br>
         <p><a href='/logout'>Logout</a></p>
+
+        <p>
+        <input type='text' id='search' placeholder='Search...'>
+        <span id='result'></span>
+        </p>
+
+        <p>
+        <input type='text' id='entry' />
+        <input type='submit' id='insert' value="Insert" />
+        </p>
+        <div id='data'></div>
+
 
         <script src="/socket.io/socket.io.js"></script>
         <script>
@@ -28,6 +37,13 @@
                     }else{
                         $('#result').html("Suggestions: none");
                     }
+                });
+
+                $('#insert').click(function(){
+                    var input = $('#entry').val();
+                    $.post('/insert', {data: input}, function (res) {
+                        $('#data').html(res);
+                    });
                 });
             });
         </script>

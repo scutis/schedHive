@@ -12,7 +12,7 @@ var socket = function(server) {
             console.log(socket.handshake.session);
         socket.handshake.session.save();
     });
-}
+};
 
 
 module.exports = socket;

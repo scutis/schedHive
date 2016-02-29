@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('../db');
+var hash = require('../sha');
 
 
 router.get('/', function(req, res){
@@ -23,7 +24,7 @@ router.post('/', function(req, res){
             res.send("No user found");
         }
         else{
-            if (req.body.password === result[0].password){
+            if (hash(req.body.password, result[0].salt) === result[0].hash){
                 req.session.user = result[0];
                 res.redirect('../');
             }
