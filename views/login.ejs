@@ -5,10 +5,24 @@
         <link rel='stylesheet' href='/stylesheets/style.css' />
     </head>
     <body>
-        <form method='POST' action=''>
-            Username: <input type='text' name='username' size='15' /><br />
-            Password: <input type='password' name='password' size='15' /><br />
-            <input type='submit' value='Login' />
-        </form>
+        Username: <input type='text' id='username' name='username' size='15' /><br />
+        Password: <input type='password' id='password' name='password' size='15' /><br />
+        <input type='submit' id='login' value='Login' />
+
+        <div id='info'></div>
+
+        <script src="javascripts/jquery.js"></script>
+        <script>
+            $(function() {
+
+                $('#login').click(function(){
+                    var username = $('#username').val();
+                    var password = $('#password').val();
+                    $.post('/login', {username: username, password: password}, function (res) {
+                            $('#info').html(res);
+                    });
+                });
+            });
+        </script>
     </body>
 </html>

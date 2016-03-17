@@ -1,8 +1,6 @@
 var socket = function(server) {
     var io = require('socket.io').listen(server);
-
     var session = require('./session');
-
     var share = require('express-socket.io-session');
 
     io.use(share(session));

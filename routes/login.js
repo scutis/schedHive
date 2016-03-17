@@ -5,35 +5,36 @@ var hash = require('../sha');
 
 
 router.get('/', function(req, res){
-    if (!req.session.user) {
+    if (!req.session.user)
         res.render('login');
-    } else{
+    else
         res.redirect('../');
-    }
 });
 
 router.post('/', function(req, res){
-    mysql.query('SELECT * FROM users WHERE username = ?', req.body.username, function(err, result){
-        if (err){
-            console.error(err);
-            res.send("Error");
-            return;
-        }
-        if (!result.length){
-            console.log("No user found");
-            res.send("No user found");
-        }
-        else{
-            if (hash(req.body.password, result[0].salt) === result[0].hash){
-                req.session.user = result[0];
-                res.redirect('../');
-            }
-            else{
-                console.log("Incorrect password");
-                res.send("Incorrect password");
-            }
-        }
-    });
+    if (req.session.user) {
+        res.redirect('../');
+    } else{
+        mysql.connect(res, function(connection){
+            connection.query('SELECT * FROM users WHERE username = ?', req.body.username, function(err, result){
+                connection.release();
+
+                if (err){
+                    res.sendStatus(500);
+                    return;
+                }
+
+                if (!result.length || hash(req.body.password, result[0].salt) !== result[0].hash)
+                    res.send("Invalid credentials");
+                else{
+                    delete result[0].hash;
+                    delete result[0].salt;
+                    req.session.user = result[0];
+                    res.redirect('../');
+                }
+            });
+        });
+    }
 });
 
 module.exports = router;

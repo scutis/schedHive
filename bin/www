@@ -4,24 +4,10 @@
  * Module dependencies.
  */
 
-//Import mysql database
-var mysql = require('../db');
-mysql.connect(); //Connect to mysql database
-
 var app = require('../app');
 var socket = require('../io');
 var debug = require('debug')('schedHive:server');
-var https = require('https');
-
-var fs = require('fs');
-
-var key = fs.readFileSync('schedhive-key.pem');
-var cert = fs.readFileSync('schedhive-cert.pem')
-
-var options = {
-  key: key,
-  cert: cert
-};
+var http = require('http');
 
 /**
  * Get port from environment and store in Express.
@@ -34,7 +20,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = https.createServer(options, app);
+var server = http.createServer(app);
 socket(server);
 
 /**
