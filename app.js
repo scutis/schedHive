@@ -23,7 +23,15 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'));
+app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
+app.use('/font-awesome', express.static(__dirname + '/node_modules/font-awesome/'));
+app.use('/html5shiv', express.static(__dirname + '/node_modules/html5shiv/dist/'));
+app.use('/respond', express.static(__dirname + '/node_modules/respond.js/dest/'));
+
 
 //Import session
 var session = require('./session');

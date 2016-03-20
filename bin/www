@@ -9,6 +9,19 @@ var socket = require('../io');
 var debug = require('debug')('schedHive:server');
 var http = require('http');
 
+var less = require('less');
+var fs = require('fs');
+
+less.render(fs.readFileSync(__dirname + '/../style/style.less', "utf8"),
+    {
+        paths: [__dirname + '/../style'],
+        filename: 'style.less',
+        compress: true
+    },
+    function (e, output) {
+        fs.writeFileSync(__dirname + '/../public/css/style.css', output.css);
+    });
+
 /**
  * Get port from environment and store in Express.
  */
