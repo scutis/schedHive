@@ -14,17 +14,12 @@ router.post('/', function(req, res) {
                     res.sendStatus(500);
                     return;
                 }
-                
-                if (!result.length) {
-                    res.send("Suggestions: none");
-                }
-                else {
-                    var output = "Suggestions: ";
-                    for (var i = 0; i < result.length; i++) {
-                        output += result[i].username + " ";
-                    }
-                    res.send(output);
-                }
+                var output = [];
+                for (var i = 0; i < result.length; i++)
+                    output.push(result[i].username);
+
+                res.send(JSON.stringify(output));
+
             });
         });
 

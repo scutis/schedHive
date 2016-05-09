@@ -1,32 +1,7 @@
-//Loads the correct sidebar on window load,
-//collapses the sidebar on window resize.
-// Sets the min-height of #page-wrapper to window size
 $(function() {
-    $(window).bind("load resize", function() {
-        topOffset = 50;
-        width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-        if (width < 768) {
-            $('div.navbar-collapse').addClass('collapse');
-            topOffset = 100; // 2-row-menu
-        } else {
-            $('div.navbar-collapse').removeClass('collapse');
-        }
 
-        height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
-        height = height - topOffset;
-        if (height < 1) height = 1;
-        if (height > topOffset) {
-            $("#page-wrapper").css("min-height", (height) + "px");
-        }
-    });
-
-    var url = window.location;
-    var element = $('ul.nav a').filter(function() {
-        return this.href == url || url.href.indexOf(this.href) == 0;
-    }).addClass('active').parent().parent().addClass('in').parent();
-    if (element.is('li')) {
-        element.addClass('active');
-    }
+    //Collapse sidebar
+    $('div.navbar-collapse').addClass('collapse');
 
     $('#login').click(function(){
         var username = $('#username').val();
@@ -39,14 +14,16 @@ $(function() {
         });
     });
 
-    $('#search').keyup(function(){
+    $('#search-box').keyup(function(){
         var input = $(this).val();
+        $("#search-res").empty();
         if (input != "") {
             $.post('/search', {search: input}, function (res) {
-                $('#result').html(res);
+                var output = JSON.parse(res);
+                for (var i = 0; i < output.length; i++) {
+                    $("#search-res").append("<a href='#'>"+output[i]+"</a>");
+                }
             });
-        }else{
-            $('#result').html("Suggestions: none");
         }
     });
 
@@ -56,4 +33,14 @@ $(function() {
             $('#data').html(res);
         });
     });
+
+    //Login by pressing enter key in password field
+    $('#password').keypress(function (e) {
+        if (e.which == 13) {
+            $("#login").click()
+        }
+    });
+
+    //Enable sub-menus expansion/collapse
+    $('#side-menu').metisMenu();
 });

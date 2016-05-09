@@ -16,17 +16,17 @@ body {
     padding: 0 15px;
     min-height: 568px;
     background-color: white;
-    padding-top: 101px;
 }
 
 @media(min-width:768px) {
     #page-wrapper {
         position: inherit;
         margin: 0 0 0 250px;
-        padding: 52px 0 0 30px;
+        padding: 0 30px;
         border-left: 1px solid darken(@gray-lightest, 6.5%);
     }
 }
+
 
 // Navigation
 
@@ -90,12 +90,6 @@ body {
     left: auto;
 }
 
-.navbar-default{
-    position: fixed;
-    width: 100%;
-    margin: 0 0 405px 0;
-}
-
 // --Sidebar
 
 .sidebar {
@@ -157,6 +151,54 @@ body {
         margin-left: auto;
     }
 }
+
+//Search
+
+.sidebar-search input:focus + .search-res {
+  display: block;
+}
+
+.sidebar-search .search-res {
+  display: none;
+  position: absolute;
+  top: 33px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: #fdfdfd;
+  border: 1px solid;
+  border-color: #cbcfe2 #c8cee7 #c4c7d7;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #fdfdfd, #eceef4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-search .search-res a {
+  display: block;
+  position: relative;
+  margin: 0 -1px;
+  padding: 6px 40px 6px 10px;
+  color: #808394;
+  font-weight: 500;
+  text-decoration: none;
+  text-shadow: 0 1px white;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+.sidebar-search .search-res:hover {
+  display: block;
+}
+
+.sidebar-search .search-res a:hover {
+  color: white;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
+  background: #338cdf;
+  border-color: #2380dd #2179d5 #1a60aa;
+  background: linear-gradient(to bottom, #59aaf4, #338cdf);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 1px rgba(0, 0, 0, 0.08);
+}
+
 
 // Buttons
 

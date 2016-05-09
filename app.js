@@ -31,6 +31,7 @@ app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.use('/font-awesome', express.static(__dirname + '/node_modules/font-awesome/'));
 app.use('/html5shiv', express.static(__dirname + '/node_modules/html5shiv/dist/'));
 app.use('/respond', express.static(__dirname + '/node_modules/respond.js/dest/'));
+app.use('/metismenu', express.static(__dirname + '/node_modules/metismenu/dist/'));
 
 
 //Import session
