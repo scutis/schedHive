@@ -187,7 +187,7 @@
                             </span>
                             <input id="search-box" type="text" class="form-control" placeholder="Search...">
 
-                            <div id="search-res" class="search-res"></div>
+                            <div id="search-res"></div>
                         </div>
                     </li>
                     <li>
@@ -206,7 +206,7 @@
                         <!-- /.nav-second-level -->
                     </li>
                     <li>
-                        <a  id="private-mes" href="#"><i class="fa fa-envelope fa-fw"></i> Private Messages</a>
+                        <a href="#"><i class="fa fa-envelope fa-fw"></i> Private Messages</a>
                     </li>
                         </ul>
                     </li>
@@ -233,7 +233,7 @@
 
                     <script src="/socket.io/socket.io.js"></script>
                     <script>
-                        var socket = io.connect('http://localhost:3000');
+                        var socket = io.connect(window.location.href);
                     </script>
 
                 </div>
