@@ -25,12 +25,12 @@ router.post('/', function(req, res){
                 }
 
                 if (!result.length || hash(req.body.password, result[0].salt) !== result[0].hash)
-                    res.send("Invalid credentials");
+                    res.send("false");
                 else{
                     delete result[0].hash;
                     delete result[0].salt;
                     req.session.user = result[0];
-                    res.redirect('../');
+                    res.send("true");
                 }
             });
         });

@@ -11,6 +11,7 @@ var login = require('./routes/login');
 var logout = require('./routes/logout');
 var search = require('./routes/search');
 var insert = require('./routes/insert');
+var member = require('./routes/member');
 
 var app = express();
 
@@ -43,6 +44,7 @@ app.use('/login', login);
 app.use('/logout', logout);
 app.use('/search', search);
 app.use('/insert', insert);
+app.use('/member', member);
 
 
 // catch 404 and forward to error handler

@@ -9,19 +9,18 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>schedHive - Home</title>
+    <title>schedHive - Log In</title>
 
-    <!-- Bootstrap Core CSS -->
+    <!-- Bootstrap CSS -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font-Awesome -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- Custom CSS -->
     <link href="css/style.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="html5shiv/html5shiv.min.js"></script>
     <script src="respond/respond.min.js"></script>
@@ -36,7 +35,7 @@
         <div class="col-md-4 col-md-offset-4">
             <div class="login-panel panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Please Sign In</h3>
+                    <h3 class="panel-title">Log In to schedHive</h3>
                 </div>
                 <div class="panel-body">
                     <form role="form">
@@ -48,11 +47,11 @@
                                 <input class="form-control" placeholder="Password" id="password" type="password" value="">
                             </div>
 
-                            <a id="login" class="btn btn-lg btn-primary btn-block">Login</a>
-                            <div id='info'></div>
+                            <a id="login" class="btn btn-lg btn-primary btn-block">Log In</a>
                         </fieldset>
                     </form>
                 </div>
+                <div id="login-error" class='alert alert-danger' style="display: none; margin-bottom: 0"></div>
             </div>
         </div>
     </div>

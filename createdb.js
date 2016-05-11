@@ -16,6 +16,36 @@ connection.query('USE schedHive');
 connection.query('CREATE TABLE data (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, input TEXT)');
 connection.query('CREATE TABLE users (id INT unsigned PRIMARY KEY AUTO_INCREMENT, username VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), firstName VARCHAR(100), lastName VARCHAR(100))');
 
+connection.query('CREATE TABLE groups (id INT unsigned PRIMARY KEY AUTO_INCREMENT, description VARCHAR(255), timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE members (group_id INT unsigned, user INT unsigned, level INT unsigned, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE private (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user1 INT unsigned, user2 INT unsigned)');
+//connection.query('CREATE TABLE g123456 (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, ref INT unsigned, content TEXT, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP');
+//connection.query('CREATE TABLE p123456 (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, content TEXT, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP');
+
+connection.query('CREATE TABLE p1 (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, content TEXT, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+
+
+var Private = function (user1, user2) {
+    this.user1 = user1;
+    this.user2 = user2;
+};
+
+var Message = function (user, content) {
+    this.user = user;
+    this.content = content;
+};
+
+var privateList = [];
+var messageList = [];
+
+privateList.push(new Private(48, 49));
+messageList.push(new Message(48, "Hello World"));
+
+connection.query('INSERT INTO private SET ?', privateList[0]);
+connection.query('INSERT INTO p1 SET ?', messageList[0]);
+
+
+
 var User = function (firstName, lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
@@ -80,6 +110,11 @@ var admin = new User("Admin", "Admin");
 admin.username = "admin";
 admin.hash = hash(admin.username, admin.salt);
 
+var mod = new User("Mod", "Mod");
+mod.username = "mod";
+mod.hash = hash(mod.username, mod.salt);
+
 connection.query('INSERT INTO users SET ?', admin);
+connection.query('INSERT INTO users SET ?', mod);
 
 connection.end();

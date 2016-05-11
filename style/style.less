@@ -154,12 +154,7 @@ body {
 
 //Search
 
-.sidebar-search input:focus + #search-res {
-  display: block;
-}
-
 .sidebar-search #search-res {
-  display: none;
   position: absolute;
   top: 33px;
   left: 0;
@@ -186,18 +181,14 @@ body {
   border-radius: 3px;
 }
 
-.sidebar-search #search-res:hover {
-  display: block;
-}
-
-.sidebar-search #search-res a:hover {
+.sidebar-search #search-res .selected{
   color: white;
+  cursor: pointer;
   text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
   background: #338cdf;
   border-color: #2380dd #2179d5 #1a60aa;
   background: linear-gradient(to bottom, #59aaf4, #338cdf);
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 1px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
 }
 
 
