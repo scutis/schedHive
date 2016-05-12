@@ -25,97 +25,35 @@
     </div>
     <!-- /.col-lg-6 -->
     <div class="col-lg-6">
-        <div class="chat-panel panel panel-default">
+        <div class="pm-panel panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-comments fa-fw"></i>
-                Chat
+                Private Messages
                 <div class="btn-group pull-right">
                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-chevron-down"></i>
                     </button>
                     <ul class="dropdown-menu slidedown">
                         <li>
-                            <a href="#">
+                            <a id="refresh" href="#">
                                 <i class="fa fa-refresh fa-fw"></i> Refresh
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-check-circle fa-fw"></i> Available
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-times fa-fw"></i> Busy
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-clock-o fa-fw"></i> Away
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-sign-out fa-fw"></i> Sign Out
-                            </a>
+                            </a href="#">
                         </li>
                     </ul>
                 </div>
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <ul class="chat">
-                    <% for (var i = 0; i < messages.length; i++){
-
-                    if (messages[i].user = 48){
-                    %>
-                    <li class="left clearfix">
-                                    <span class="chat-img pull-left">
-                                        <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" />
-                                    </span>
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <strong class="primary-font"><%= messages[i].user %></strong>
-                                <small class="pull-right text-muted">
-                                    <i class="fa fa-clock-o fa-fw"></i> <%= messages[i].timestamp%>
-                                </small>
-                            </div>
-                            <p>
-                                <%= messages[i].content%>
-                            </p>
-                        </div>
-                    </li>
-                    <%} else {%>
-                    <li class="right clearfix">
-                                    <span class="chat-img pull-right">
-                                        <img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" />
-                                    </span>
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <small class=" text-muted">
-                                    <i class="fa fa-clock-o fa-fw"></i> <%= messages[i].timestamp%>
-                                </small>
-                                <strong class="pull-right primary-font">Bhaumik Patel</strong>
-                            </div>
-                            <p>
-                                <%= messages[i].content%>
-                            </p>
-                        </div>
-                    </li>
-                    <%}
-                    }%>
+                <ul id="pm" class="pm">
                 </ul>
             </div>
             <!-- /.panel-body -->
             <div class="panel-footer">
                 <div class="input-group">
-                    <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
-                                <span class="input-group-btn">
-                                    <button class="btn btn-warning btn-sm" id="btn-chat">
-                                        Send
-                                    </button>
-                                </span>
+                    <textarea class="form-control" rows="4" style="resize: vertical;"></textarea>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary btn-sm" id="btn-pm">Send</button>
+                    </span>
                 </div>
             </div>
             <!-- /.panel-footer -->

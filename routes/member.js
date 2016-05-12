@@ -1,48 +1,37 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('../db');
-var hash = require('../sha');
 
 router.post('/', function(req, res){
     if (req.session.user) {
 
         var data = {
-            user: req.session.user.firstName+ " " + req.session.user.lastName,
+            user: req.session.user.f_name+ " " + req.session.user.l_name,
+            u_id: req.session.user.id,
             member: null,
-            messages: null
+            m_id: req.body.m_id,
+            output: null
         };
 
         mysql.connect(res, function(connection){
-                connection.query('SELECT firstName, lastName FROM users WHERE id = ?', [req.body.user], function (err, result) {
+                connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [data.m_id], function (err, result) {
                     
                     if (err){
                         res.sendStatus(500);
                         return;
                     }
 
-                    data.member = result[0].firstName+ " "+ result[0].lastName;
-                    console.log(data.member);
-                    connection.query('SELECT id FROM private WHERE user1 = ? AND user2 = ?', [Math.min(req.session.user.id, req.body.user), Math.max(req.session.user.id, req.body.user)], function (err, result) {
+                    data.member = result[0].f_name+ " "+ result[0].l_name;
+                        
+                    connection.query('SELECT id, u_id, data, t FROM p_table WHERE u_1 = ? AND u_2 = ?', [Math.min(data.u_id, data.m_id), Math.max(data.u_id, data.m_id)], function (err, result) {
+                        connection.release();
+                        
                         if (err){
                             res.sendStatus(500);
                             return;
                         }
-                        console.log(result[0].id);
-                        if (result.length == 1){
-                            connection.query('SELECT * FROM ??', ["p"+result[0].id], function (err, result) {
-                                connection.release();
-
-                                if (err){
-                                    res.sendStatus(500);
-                                    return;
-                                }
-                                data.messages = result;
-                                res.render('member', data);
-                            });
-                        }else{
-                            connection.release();
-                            res.render('member', data);
-                        }
+                        data.output = result;
+                        res.render('member', data);
                     });
                 });
         });

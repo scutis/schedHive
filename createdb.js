@@ -14,44 +14,36 @@ connection.query('DROP DATABASE schedHive');
 connection.query('CREATE DATABASE schedHive');
 connection.query('USE schedHive');
 connection.query('CREATE TABLE data (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, input TEXT)');
-connection.query('CREATE TABLE users (id INT unsigned PRIMARY KEY AUTO_INCREMENT, username VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), firstName VARCHAR(100), lastName VARCHAR(100))');
+connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_name VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), f_name VARCHAR(100), l_name VARCHAR(100))');
 
-connection.query('CREATE TABLE groups (id INT unsigned PRIMARY KEY AUTO_INCREMENT, description VARCHAR(255), timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
-connection.query('CREATE TABLE members (group_id INT unsigned, user INT unsigned, level INT unsigned, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
-connection.query('CREATE TABLE private (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user1 INT unsigned, user2 INT unsigned)');
-//connection.query('CREATE TABLE g123456 (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, ref INT unsigned, content TEXT, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP');
-//connection.query('CREATE TABLE p123456 (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, content TEXT, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP');
+connection.query('CREATE TABLE groups (id INT unsigned PRIMARY KEY AUTO_INCREMENT, info VARCHAR(255), t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE member (g_id INT unsigned, u_id INT unsigned, lvl INT unsigned, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
-connection.query('CREATE TABLE p1 (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, content TEXT, timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE p_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_1 INT unsigned, u_2 INT unsigned, u_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE g_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, r_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
 
-var Private = function (user1, user2) {
-    this.user1 = user1;
-    this.user2 = user2;
+var Data = function (user1, user2, user_id, content) {
+    this.u_1 = user1;
+    this.u_2 = user2;
+    this.u_id = user_id;
+    this.data = content;
 };
 
-var Message = function (user, content) {
-    this.user = user;
-    this.content = content;
-};
+var dataList = [];
 
-var privateList = [];
-var messageList = [];
+dataList.push(new Data(48, 49, 48, "Hello World"));
 
-privateList.push(new Private(48, 49));
-messageList.push(new Message(48, "Hello World"));
-
-connection.query('INSERT INTO private SET ?', privateList[0]);
-connection.query('INSERT INTO p1 SET ?', messageList[0]);
+connection.query('INSERT INTO p_table SET ?', dataList[0]);
 
 
 
 var User = function (firstName, lastName) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.username = random.lower(6);
+    this.f_name = firstName;
+    this.l_name = lastName;
+    this.u_name = random.lower(6);
     this.salt = random.alphaNum(6);
-    this.hash = hash(this.username, this.salt);
+    this.hash = hash(this.u_name, this.salt);
 };
 
 var userList = [];
@@ -104,17 +96,17 @@ userList.push(new User("Tim", "Raulf-Pick"));
 userList.push(new User("Raymond", "Williams"));
 
 for (var i = 0; i < userList.length; i++)
-    connection.query('INSERT INTO users SET ?', userList[i]);
+    connection.query('INSERT INTO user SET ?', userList[i]);
 
 var admin = new User("Admin", "Admin");
-admin.username = "admin";
-admin.hash = hash(admin.username, admin.salt);
+admin.u_name = "admin";
+admin.hash = hash(admin.u_name, admin.salt);
 
 var mod = new User("Mod", "Mod");
-mod.username = "mod";
-mod.hash = hash(mod.username, mod.salt);
+mod.u_name = "mod";
+mod.hash = hash(mod.u_name, mod.salt);
 
-connection.query('INSERT INTO users SET ?', admin);
-connection.query('INSERT INTO users SET ?', mod);
+connection.query('INSERT INTO user SET ?', admin);
+connection.query('INSERT INTO user SET ?', mod);
 
 connection.end();

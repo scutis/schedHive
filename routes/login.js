@@ -16,7 +16,7 @@ router.post('/', function(req, res){
         res.redirect('../');
     } else{
         mysql.connect(res, function(connection){
-            connection.query('SELECT * FROM users WHERE username = ?', req.body.username, function(err, result){
+            connection.query('SELECT * FROM user WHERE u_name = ?', req.body.u_name, function(err, result){
                 connection.release();
 
                 if (err){
@@ -24,7 +24,7 @@ router.post('/', function(req, res){
                     return;
                 }
 
-                if (!result.length || hash(req.body.password, result[0].salt) !== result[0].hash)
+                if (!result.length || hash(req.body.pw, result[0].salt) !== result[0].hash)
                     res.send("false");
                 else{
                     delete result[0].hash;
