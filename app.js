@@ -10,9 +10,9 @@ var index = require('./routes/index');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
 var search = require('./routes/search');
-var insert = require('./routes/insert');
-var member = require('./routes/member');
-var pm = require('./routes/pm');
+var get_pm = require('./routes/get_pm');
+var add_pm = require('./routes/add_pm');
+var content = require('./routes/content');
 
 var app = express();
 
@@ -44,18 +44,21 @@ app.use('/', index);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/search', search);
-app.use('/insert', insert);
-app.use('/member', member);
-app.use('/pm', pm);
+app.use('/get_pm', get_pm);
+app.use('/add_pm', add_pm);
+app.use('/content', content);
 
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+    res.redirect('/'); //redirect to index
+    /*
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
+    */
 });
-
+/*
 // error handlers
 
 // development error handler
@@ -79,6 +82,6 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
+*/
 
 module.exports = app;

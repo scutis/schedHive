@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var random = require('random-gen');
 var hash = require('./sha');
+var aes = require('./aes');
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -16,13 +17,15 @@ connection.query('USE schedHive');
 connection.query('CREATE TABLE data (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, input TEXT)');
 connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_name VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), f_name VARCHAR(100), l_name VARCHAR(100))');
 
-connection.query('CREATE TABLE groups (id INT unsigned PRIMARY KEY AUTO_INCREMENT, info VARCHAR(255), t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE g_list (id INT unsigned PRIMARY KEY AUTO_INCREMENT, info VARCHAR(255), t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE g_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, r_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 connection.query('CREATE TABLE member (g_id INT unsigned, u_id INT unsigned, lvl INT unsigned, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
-connection.query('CREATE TABLE p_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_1 INT unsigned, u_2 INT unsigned, u_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
-connection.query('CREATE TABLE g_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, r_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
+connection.query('CREATE TABLE p_list (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_min INT unsigned, u_max INT unsigned)');
+connection.query('CREATE TABLE p_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, p_id INT unsigned, u_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
+/*
 var Data = function (user1, user2, user_id, content) {
     this.u_1 = user1;
     this.u_2 = user2;
@@ -32,10 +35,10 @@ var Data = function (user1, user2, user_id, content) {
 
 var dataList = [];
 
-dataList.push(new Data(48, 49, 48, "Hello World"));
+dataList.push(new Data(48, 49, 48, aes.encrypt("Hello World")));
 
 connection.query('INSERT INTO p_table SET ?', dataList[0]);
-
+*/
 
 
 var User = function (firstName, lastName) {

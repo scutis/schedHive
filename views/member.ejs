@@ -9,14 +9,32 @@
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <%= member %>
+                Profile
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <h4>Info</h4>
-                <p>
-                    Info/Description of the member
+               <span class='pm-img pull-left'> <div class="img-circle profile-img"><p><%= member.f_name.charAt(0).toUpperCase() %><%= member.l_name.charAt(0).toUpperCase() %></p></div></span>
+                <h3><%= member.f_name %> <%= member.l_name %></h3>
+                <p class="justify">
+                    Info/Description of the member.
                 </p>
+                <br><br>
+                <h4>Skills</h4>
+                <p class="justify">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                <br>
+                <h4>Interests</h4>
+                <p class="justify">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+
             </div>
             <!-- /.panel-body -->
         </div>
@@ -35,24 +53,24 @@
                     </button>
                     <ul class="dropdown-menu slidedown">
                         <li>
-                            <a id="refresh" href="#">
+                            <a id="refresh" style="cursor: pointer;">
                                 <i class="fa fa-refresh fa-fw"></i> Refresh
-                            </a href="#">
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
             <!-- /.panel-heading -->
-            <div class="panel-body">
-                <ul id="pm" class="pm">
+            <div id="pm-panel" class="panel-body">
+                <ul id="pm-list" class="pm">
                 </ul>
             </div>
             <!-- /.panel-body -->
             <div class="panel-footer">
                 <div class="input-group">
-                    <textarea class="form-control" rows="4" style="resize: vertical;"></textarea>
+                    <textarea id="message" class="form-control" rows="4" style="resize: vertical;"></textarea>
                     <span class="input-group-btn">
-                        <button class="btn btn-primary btn-sm" id="btn-pm">Send</button>
+                        <button class="btn btn-primary btn-sm" id="send">Send</button>
                     </span>
                 </div>
             </div>

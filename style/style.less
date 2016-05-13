@@ -181,7 +181,7 @@ body {
   border-radius: 3px;
 }
 
-.sidebar-search #search-res .selected{
+.sidebar-search #search-res #selected{
   color: white;
   cursor: pointer;
   text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
@@ -265,30 +265,42 @@ body {
 }
 
 .avatar-left {
-    position: relative;
-    background-color: #336699;
     width: 50px;
     height: 50px;
-    padding-top: 17px;
-    padding-left:17px;
+    background-color: #336699;
+    position: relative;
 }
 
 .avatar-right {
-    position: relative;
-    background-color: #5288DB;
     width: 50px;
     height: 50px;
-    padding-top: 17px;
-    padding-left:17px;
+    background-color: #5288DB;
+    position: relative;
 }
 
-.pm-init {
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    color: white;
-    font-size: 12px;
+.profile-img {
+    width: 80px;
+    height: 80px;
+    margin-right: 10px;
+    background-color: #5288DB;
+    font-size: 20px;
+    position: relative;
 }
+
+.avatar-left p, .avatar-right p, .profile-img p {
+    color:white;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.justify {
+    text-align: justify;
+}
+
 
 // Login Page
 
