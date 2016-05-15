@@ -15,15 +15,14 @@ connection.query('DROP DATABASE schedHive');
 connection.query('CREATE DATABASE schedHive');
 connection.query('USE schedHive');
 connection.query('CREATE TABLE data (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, input TEXT)');
-connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_name VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), f_name VARCHAR(100), l_name VARCHAR(100))');
+connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_name VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), f_name VARCHAR(100), l_name VARCHAR(100), profile TEXT)');
 
 connection.query('CREATE TABLE g_list (id INT unsigned PRIMARY KEY AUTO_INCREMENT, info VARCHAR(255), t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 connection.query('CREATE TABLE g_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, r_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 connection.query('CREATE TABLE member (g_id INT unsigned, u_id INT unsigned, lvl INT unsigned, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
 
-connection.query('CREATE TABLE p_list (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_min INT unsigned, u_max INT unsigned)');
-connection.query('CREATE TABLE p_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, p_id INT unsigned, u_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE p_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_from INT unsigned, u_to INT unsigned, data TEXT, u_read INT unsigned, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
 /*
 var Data = function (user1, user2, user_id, content) {
@@ -47,6 +46,7 @@ var User = function (firstName, lastName) {
     this.u_name = random.lower(6);
     this.salt = random.alphaNum(6);
     this.hash = hash(this.u_name, this.salt);
+    this.profile = "Each member can edit their personal profile (picture, CV, skills, interests)...";
 };
 
 var userList = [];

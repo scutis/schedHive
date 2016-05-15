@@ -7,46 +7,45 @@ router.post('/', function(req, res){
     if (req.session.user) {
 
         var data = {
-            user: {id: req.session.user.id, f_name: req.session.user.f_name, l_name: req.session.user.l_name},
-            member: {id: req.body.m_id, f_name: null, l_name: null},
-            output: []
+            u: {f_name: req.session.user.f_name, l_name: req.session.user.l_name},
+            m: {f_name: null, l_name: null},
+            o: []
         };
 
         mysql.connect(res, function(connection){
-            connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [data.member.id], function (err, result) {
+            connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [req.body.m_id], function (err, result) {
 
                 if (err){
                     res.sendStatus(500);
                     return;
                 }
 
-                data.member.f_name = result[0].f_name;
-                data.member.l_name = result[0].l_name;
+                data.m.f_name = result[0].f_name;
+                data.m.l_name = result[0].l_name;
 
-                connection.query('SELECT id FROM p_list WHERE u_min = ? AND u_max = ?', [Math.min(data.user.id, data.member.id), Math.max(data.user.id, data.member.id)], function (err, result) {
+                connection.query('SELECT u_from, data, t, u_read FROM p_table WHERE (u_from = ? AND u_to = ?) OR (u_from = ? AND u_to = ?)', [req.session.user.id, req.body.m_id, req.body.m_id, req.session.user.id], function (err, result) {
                     if (err){
                         res.sendStatus(500);
                         return;
                     }
-                    if (result.length != 0){
-                        connection.query('SELECT id, u_id, data, t FROM p_table WHERE p_id = ?', [result[0].id], function (err, result) {
+                    if (result.length != 0) {
+                        data.o = result;
+
+                        for (var i = 0; i < result.length; i++) {
+                            data.o[i].data = aes.decrypt(result[i].data);
+                        }
+
+                        connection.query('UPDATE p_table SET u_read = 1 WHERE u_from = ? AND u_to = ? AND u_read = 0', [req.body.m_id, req.session.user.id], function (err) {
                             connection.release();
-
                             if (err){
-                                res.sendStatus(500);
-                                return;
+                                console.log(err);
                             }
-                            data.output = result;
-
-                            for (var i = 0; i < result.length; i++){
-                                data.output[i].data = aes.decrypt(result[i].data);
-                            }
-                            res.send(JSON.stringify(data));
                         });
-                    } else{
+                    } else
                         connection.release();
-                        res.send(JSON.stringify(data));
-                    }
+
+                    res.send(JSON.stringify(data));
+
                 });
             });
         });

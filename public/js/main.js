@@ -1,18 +1,22 @@
 $(function() {
 
     function get_pm(m_id) {
-        $("#pm-list").empty();
         $.post('/get_pm', {m_id: m_id}, function (res) {
+            $("#pm-list").empty();
             var data = JSON.parse(res);
-            for (var i = 0; i < data.output.length; i++){
-                if (data.output[i].u_id == data.user.id) {
-                    $("#pm-list").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>"+data.user.f_name.charAt(0).toUpperCase()+data.user.l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>"+ data.user.f_name +" "+ data.user.l_name+ "</strong> <small class='pull-right text-muted'> <i class='fa fa-clock-o fa-fw'></i> "+ data.output[i].t +" </small> </div> <p class='justify'>"+ data.output[i].data +"</p> </div> </li>");
+            for (var i = 0; i < data.o.length; i++){
+                if (data.o[i].u_from == m_id) {
+                    $("#pm-list").append("<li class='right clearfix'> <span class='pm-img pull-right'> <div class='img-circle avatar-right'><p>"+data.m.f_name.charAt(0).toUpperCase()+data.m.l_name.charAt(0).toUpperCase()+"</p></div> </span> <div class='pm-body clearfix'> <div class='header'> <small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i> "+ data.o[i].t +"</small> <strong class='pull-right primary-font'>"+ data.m.f_name +" " + data.m.l_name+"</strong> </div> <p class='justify'>"+ data.o[i].data +"</p> </div> </li>");
+                    if (!data.o[i].u_read){
+                        $("#pm-list li:last").addClass("to-read");
+                    }
                 } else{
-                    $("#pm-list").append("<li class='right clearfix'> <span class='pm-img pull-right'> <div class='img-circle avatar-right'><p>"+data.member.f_name.charAt(0).toUpperCase()+data.member.l_name.charAt(0).toUpperCase()+"</p></div> </span> <div class='pm-body clearfix'> <div class='header'> <small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i> "+ data.output[i].t +"</small> <strong class='pull-right primary-font'>"+ data.member.f_name +" " + data.member.l_name+"</strong> </div> <p class='justify'>"+ data.output[i].data +"</p> </div> </li>");
+                    $("#pm-list").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>"+data.u.f_name.charAt(0).toUpperCase()+data.u.l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>"+ data.u.f_name +" "+ data.u.l_name+ "</strong> <small class='pull-right text-muted'> <i class='fa fa-clock-o fa-fw'></i> "+ data.o[i].t +" </small> </div> <p class='justify'>"+ data.o[i].data +"</p> </div> </li>");
                 }
             }
             $("#pm-panel").scrollTop($("#pm-panel")[0].scrollHeight);
         });
+
     }
 
     function add_pm(m_id) {
@@ -24,29 +28,77 @@ $(function() {
         }
     }
 
-    function loadContent(href){
-        if (href != '/logout'){
-            $.post('/content', {href: href}, function (res) {
-                $('#page-wrapper').html(res);
-
-                var input = href.split("/");
-                switch(input[1]) {
-                    case 'member':
-                        get_pm(input[2]);
-
-                        $('#refresh').click(function (){
-                            get_pm(input[2]);
-                        });
-
-                        $('#send').click(function (){
-                            add_pm(input[2]);
-                        });
-
-                        break;
+    function list_pm(sel) {
+        $.post('/list_pm', {sel: sel}, function (res) {
+            $("#conv-list").empty();
+            var data = JSON.parse(res);
+            for (var i = 0; i < data.length; i++){
+                $("#conv-list").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>"+data[i].f_name.charAt(0).toUpperCase()+data[i].l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>"+ data[i].f_name +" "+ data[i].l_name+ "</strong> <small class='pull-right text-muted'> <i class='fa fa-clock-o fa-fw'></i> "+ data[i].t +" </small> </div> <p class='justify'>"+ data[i].data +"</p> </div> </li>");
+                $("#conv-list li:last").attr("m_id", data[i].m_id);
+                if (!data[i].u_read && data[i].u_from == data[i].m_id){
+                    $("#conv-list li:last").addClass("to-read");
                 }
+            }
+
+            $("#conv-list li").click(function () {
+                var m_id = $(this).attr("m_id");
+                $(this).removeClass("to-read");
+                get_pm(m_id);
+
+                $("#send").unbind("click");
+                $("#refresh").unbind("click");
+
+                $('#refresh').click(function () {
+                    get_pm(m_id);
+                });
+
+                $('#send').click(function () {
+                    add_pm(m_id);
+                });
             });
-        } else{
-            window.location.href = '/logout';
+
+        });
+    }
+
+    function loadContent(href){
+            var input = href.split("/");
+            if (input[1] == 'logout') {
+                window.location.href = '/logout';
+            } else {
+                $.post('/content', {page: input[1], id: input[2]}, function (res) {
+                    $('#page-wrapper').html(res);
+
+                    var input = href.split("/");
+                    switch (input[1]) {
+                        case 'member':
+                            get_pm(input[2]);
+
+                            $('#refresh').click(function () {
+                                get_pm(input[2]);
+                            });
+
+                            $('#send').click(function () {
+                                add_pm(input[2]);
+                            });
+
+                            break;
+                        case 'pm':
+                            list_pm("all");
+
+                            $('#all-pm').click(function () {
+                                list_pm("all");
+                            });
+
+                            $('#unread_pm').click(function () {
+                                list_pm("unread");
+                            });
+
+                            break;
+                    }
+                });
+            }
+        if (href != window.location.pathname) {
+            window.history.pushState('', 'page: '+href, href);
         }
     }
 
@@ -76,7 +128,6 @@ $(function() {
 
         var href = $(this).attr("href");
         loadContent(href);
-        history.pushState('', 'page: '+href, href);
         e.preventDefault();
     });
 
@@ -109,7 +160,6 @@ $(function() {
             $('#search-box').val(selected.text());
             loadContent(href);
 
-             history.pushState('', 'page: '+href, href);
              e.preventDefault();
             $("#search-res").empty();
         }
@@ -148,7 +198,6 @@ $(function() {
                         loadContent(href);
                         $("#search-res").empty();
 
-                        history.pushState('', 'page: '+href, href);
                         e.preventDefault();
                     });
 

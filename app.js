@@ -13,6 +13,7 @@ var search = require('./routes/search');
 var get_pm = require('./routes/get_pm');
 var add_pm = require('./routes/add_pm');
 var content = require('./routes/content');
+var list_pm = require('./routes/list_pm');
 
 var app = express();
 
@@ -46,6 +47,7 @@ app.use('/logout', logout);
 app.use('/search', search);
 app.use('/get_pm', get_pm);
 app.use('/add_pm', add_pm);
+app.use('/list_pm', list_pm);
 app.use('/content', content);
 
 

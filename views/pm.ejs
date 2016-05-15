@@ -1,26 +1,39 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Member / <%= member.f_name %> <%= member.l_name %></h1>
+        <h1 class="page-header">PM</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
 <div class="row">
     <div class="col-lg-6">
-        <div class="panel panel-default">
+        <div class="pm-panel panel panel-default">
             <div class="panel-heading">
-                Profile
+                <i class="fa fa-envelope fa-fw"></i>
+                Conversations
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu slidedown">
+                        <li>
+                            <a id="all-pm" style="cursor: pointer;">
+                                <i class="fa fa-angle-right fa-fw"></i> All
+                            </a>
+                            <a id="unread_pm" style="cursor: pointer;">
+                                <i class="fa fa-angle-right fa-fw"></i> Unread
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <!-- /.panel-heading -->
-            <div class="panel-body">
-               <span class='pm-img pull-left'> <div class="img-circle profile-img"><p><%= member.f_name.charAt(0).toUpperCase() %><%= member.l_name.charAt(0).toUpperCase() %></p></div></span>
-                <h3><%= member.f_name %> <%= member.l_name %></h3>
-                <p class="justify"><%= member.profile %></p>
+            <div id="conv-panel" class="panel-body">
+                <ul id="conv-list" class="pm">
+                </ul>
             </div>
             <!-- /.panel-body -->
         </div>
-        <!-- /.panel -->
-        <!-- /.panel -->
     </div>
     <!-- /.col-lg-6 -->
     <div class="col-lg-6">
