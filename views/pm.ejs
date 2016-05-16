@@ -6,11 +6,11 @@
 </div>
 <!-- /.row -->
 <div class="row">
-    <div class="col-lg-6">
-        <div class="pm-panel panel panel-default">
+    <div class="col-lg-4">
+        <div class="conv-panel panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-envelope fa-fw"></i>
-                Conversations
+                <span id="conv_title"></span>
                 <div class="btn-group pull-right">
                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-chevron-down"></i>
@@ -29,18 +29,18 @@
             </div>
             <!-- /.panel-heading -->
             <div id="conv-panel" class="panel-body">
-                <ul id="conv-list" class="pm">
+                <ul id="conv-list" class="conv">
                 </ul>
             </div>
             <!-- /.panel-body -->
         </div>
     </div>
     <!-- /.col-lg-6 -->
-    <div class="col-lg-6">
+    <div class="col-lg-8">
         <div class="pm-panel panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-comments fa-fw"></i>
-                Private Messages
+                <span id="pm_title">Private Messages</span>
                 <div class="btn-group pull-right">
                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-chevron-down"></i>
@@ -57,12 +57,13 @@
             <!-- /.panel-heading -->
             <div id="pm-panel" class="panel-body">
                 <ul id="pm-list" class="pm">
+                    <small class='text-muted'> Select a conversation on the left</small>
                 </ul>
             </div>
             <!-- /.panel-body -->
             <div class="panel-footer">
                 <div class="input-group">
-                    <textarea id="message" class="form-control" rows="4" style="resize: vertical;"></textarea>
+                    <textarea id="message" class="form-control" rows="4" style="resize: vertical;" placeholder="Message" disabled="disabled"></textarea>
                     <span class="input-group-btn">
                         <button class="btn btn-primary btn-sm" id="send">Send</button>
                     </span>

@@ -36,6 +36,10 @@ router.post('/', function(req, res){
                         if (memberList.indexOf(m_id) <= -1){
                             memberList.push(m_id);
                             result[i].data = aes.decrypt(result[i].data).substring(0, 40) + "...";
+                            
+                            result[i].t = ('0' + result[i].t.getDate()).slice(-2) + '/' + ('0' + (result[i].t.getMonth()+1)).slice(-2) + '/' + result[i].t.getFullYear() + ' ' +
+                                ('0' + (result[i].t.getHours())).slice(-2) + ':' + ('0' + (result[i].t.getMinutes())).slice(-2);
+
                             result[i].m_id = m_id;
                             connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [m_id], function (err, output) {
                                 if (err) {
