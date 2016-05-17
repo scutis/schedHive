@@ -156,7 +156,9 @@ body {
 
 //Search
 
-.sidebar-search #search-res {
+.sidebar-search .search-res,
+.form-group .search-res{
+    display: none;
     position: absolute;
     top: 33px;
     left: 0;
@@ -168,7 +170,13 @@ body {
     border-radius: 3px;
 }
 
-.sidebar-search #search-res a {
+.form-group .search-res {
+    position: relative;
+    top: 0;
+}
+
+.sidebar-search .search-res a ,
+.form-group .search-res a{
     display: block;
     position: relative;
     margin: 0 -1px;
@@ -180,7 +188,8 @@ body {
     border-radius: 3px;
 }
 
-.sidebar-search #search-res #search-sel{
+.sidebar-search .search-res .search-sel,
+.form-group .search-res .search-sel{
     color: white;
     cursor: pointer;
     background: @brand-primary;

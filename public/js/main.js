@@ -1,5 +1,210 @@
 $(function() {
 
+    function searchBox (){
+        //Avoid default change in cursor position (arrow up/down)
+        $('#search-box').keydown(function(e) {
+            if (e.which === 38 || e.which === 40)
+                e.preventDefault();
+        });
+
+        $('#search-box').focusin(function() {
+            $('#search-res').attr("style", "display:block");
+        });
+
+        $('#search-box').focusout(function() {
+            $('#search-res').attr("style", "display:none");
+        });
+
+        $('#search-res').mouseenter(function() {
+            $('#search-box').unbind("focusout");
+        });
+
+        $('#search-res').mouseleave(function() {
+            $('#search-box').focusout(function() {
+                $('#search-res').attr("style", "display:none");
+            });
+        });
+
+        $('#search-box').keyup(function(e){
+            var selected = $('#search-res .search-sel');
+            if (e.which == 13 && selected.length != 0){
+                var href = selected.attr("href");
+                $('#search-box').val(selected.text());
+                loadContent(href);
+
+                e.preventDefault();
+                $("#search-res").empty();
+            }
+            else if (e.which == 38){
+                if (selected.length != 0){
+                    selected.prev().addClass('search-sel');
+                    selected.removeClass('search-sel');
+                    $('#search-box').val(selected.prev().text());
+                }
+                else
+                    $('#search-res a:last-child').addClass('search-sel');
+                $('#search-box').val($('#search-res .search-sel').text());
+            } else if (e.which == 40){
+                if (selected.length != 0)
+                {
+                    selected.next().addClass('search-sel');
+                    selected.removeClass('search-sel');
+                }
+                else
+                    $('#search-res a:first-child').addClass('search-sel');
+                $('#search-box').val($('#search-res .search-sel').text());
+            }
+            else {
+                var input = $(this).val();
+                if (input.trim() != "") {
+                    $.post('/search', {search: input}, function (res) {
+                        $("#search-res").empty();
+                        var output = JSON.parse(res);
+
+                        for (var i = 0; i < output.length; i++)
+                            $("#search-res").append("<a href='/member/"+output[i][0]+"'>"+output[i][1]+" "+output[i][2]+"</a>");
+
+                        $('#search-res a').click(function(e){
+                            var href = $(this).attr("href");
+                            $('#search-box').val($(this).text());
+                            loadContent(href);
+                            $("#search-res").empty();
+
+                            e.preventDefault();
+                        });
+
+                        $('#search-res a').mouseover(function(){
+                            $('#search-res .search-sel').removeClass('search-sel');
+                            $(this).addClass('search-sel');
+                        });
+
+
+                    });
+                }
+                else
+                    $("#search-res").empty();
+            }
+        });
+    }
+
+    function createGroup(){
+        var memberList = [];
+        var memberName = [];
+
+
+        function print_members(){
+            $('#m_list').empty();
+            for (var i = 0; i < memberList.length; i++){
+                $('#m_list').append("<span m_id="+memberList[i]+">"+memberName[memberList[i]]+"<i style='cursor: pointer;' class='fa fa-times fa-fw'></i>| </span>");
+            }
+
+            $('#m_list span i').unbind("click");
+            $('#m_list span i').click(function(){
+                memberList.splice(memberList.indexOf(parseInt($(this).closest('span').attr("m_id"))), 1);
+                print_members(memberList, memberName);
+            });
+        }
+
+        //Avoid default change in cursor position (arrow up/down)
+        $('#member-box').keydown(function(e) {
+            if (e.which === 38 || e.which === 40)
+                e.preventDefault();
+        });
+
+        $('#member-box').focusin(function() {
+            $('#member-res').attr("style", "display:block");
+        });
+
+        $('#member-box').focusout(function() {
+            $('#member-res').attr("style", "display:none");
+        });
+
+        $('#member-res').mouseenter(function() {
+            $('#member-box').unbind("focusout");
+        });
+
+        $('#member-res').mouseleave(function() {
+            $('#member-box').focusout(function() {
+                $('#member-res').attr("style", "display:none");
+            });
+        });
+
+        $('#member-box').keyup(function(e){
+            var selected = $('#member-res .search-sel');
+            if (e.which == 13 && selected.length != 0){
+                var m_id = parseInt(selected.attr("m_id"));
+                $('#member-box').val("");
+                memberList.push(m_id);
+                memberName[m_id] = selected.text();
+                print_members(memberList, memberName);
+
+                e.preventDefault();
+
+                $("#member-res").empty();
+            }
+            else if (e.which == 38){
+                if (selected.length != 0){
+                    selected.prev().addClass('search-sel');
+                    selected.removeClass('search-sel');
+                    $('#member-box').val(selected.prev().text());
+                }
+                else
+                    $('#member-res a:last-child').addClass('search-sel');
+                $('#member-box').val($('#member-res .search-sel').text());
+            } else if (e.which == 40){
+                if (selected.length != 0)
+                {
+                    selected.next().addClass('search-sel');
+                    selected.removeClass('search-sel');
+                }
+                else
+                    $('#member-res a:first-child').addClass('search-sel');
+                $('#member-box').val($('#member-res .search-sel').text());
+            }
+            else {
+                var input = $(this).val();
+                if (input.trim() != "") {
+                    $.post('/search', {search: input}, function (res) {
+                        $("#member-res").empty();
+                        var output = JSON.parse(res);
+
+                        for (var i = 0; i < output.length; i++) {
+                            if (memberList.indexOf(output[i][0]) <= -1)
+                                $("#member-res").append("<a m_id='" + output[i][0] + "'>" + output[i][1] + " " + output[i][2] + "</a>");
+                        }
+
+                        $('#member-res a').click(function(e){
+                            var m_id = parseInt($(this).attr("m_id"));
+                            $('#member-box').val("");
+                            memberList.push(m_id);
+                            memberName[m_id] = $(this).text();
+                            print_members(memberList, memberName);
+                            $("#member-res").empty();
+                            e.preventDefault();
+                        });
+
+                        $('#member-res a').mouseover(function(){
+                            $('#member-res .search-sel').removeClass('search-sel');
+                            $(this).addClass('search-sel');
+                        });
+
+
+                    });
+                }
+                else
+                    $("#member-res").empty();
+            }
+        });
+
+        $('#newGroup').on('hidden.bs.modal', function () {
+            memberList = [];
+            memberName = [];
+            $('#m_list').empty();
+            $('#member-res').empty();
+            $('#member-box').val("");
+        });
+    }
+
     function get_pm(m_id) {
         $("#message").removeAttr('disabled');
         $.post('/get_pm', {m_id: m_id}, function (res) {
@@ -50,10 +255,12 @@ $(function() {
             if (data.length == 0){
                 $("#pm-nav").append("<li><a class='text-center'><em style='cursor:default;'>No new messages</em></a></li><li class='divider'></li>");
                 $("#pm-nav").append("<li><a class='text-center' href='/pm'><strong>View All Conversations</strong><i class='fa fa-angle-right'></i></a></li>");
-            } else
+                $(".notif-count").attr("style", "display:none;");
+            } else{
                 $("#pm-nav").append("<li><a class='text-center' href='/pm/unread'><strong>View New Messages</strong><i class='fa fa-angle-right'></i></a></li>");
-
-            $(".notif-count").text(data.length);
+                $(".notif-count").text(data.length);
+                $(".notif-count").remove("style", "display:block;");
+            }
 
             $('a[href]').unbind("click");
 
@@ -185,120 +392,36 @@ $(function() {
             else
                 $('#login-error').html("Error");
         });
-    };
+    }
 
-    
+    //Start client scripts
+
     if (window.location.pathname != '/login'){
+        searchBox(); //Enable search box
+        createGroup(); //Enable group creation
         loadContent('/home');
         $('#side-menu').metisMenu(); //Enable sub-menu expansion/collapse
         $('div.navbar-collapse').addClass('collapse'); //Collapse side-bar
-    }
 
-    $('a[href]').click(function(e) {
+        $('a[href]').click(function(e) {
 
-        var href = $(this).attr("href");
-        loadContent(href);
-        e.preventDefault();
-    });
-
-    window.onpopstate = function(event) {
-        loadContent(location.pathname);
-    };
-
-    //Login
-    $('#login').click(function(){
-        login ();
-    });
-    $('#pw').keypress(function (e) {
-        if (e.which == 13){
-            login ();
-        }
-    });
-
-    //Search
-
-    //Avoid default change in cursor position (arrow up/down)
-    $('#search-box').keydown(function(e) {
-        if (e.which === 38 || e.which === 40)
-            e.preventDefault();
-    });
-
-    $('#search-box').focusin(function(e) {
-        $('#search-res').attr("style", "display:block");
-    });
-
-    $('#search-box').focusout(function(e) {
-        $('#search-res').attr("style", "display:none");
-    });
-
-    $('#search-res').mouseenter(function(e) {
-        $('#search-box').unbind("focusout");
-    });
-
-    $('#search-res').mouseleave(function(e) {
-        $('#search-box').focusout(function(e) {
-            $('#search-res').attr("style", "display:none");
-        });
-    });
-
-    $('#search-box').keyup(function(e){
-        var selected = $('#search-sel');
-        if (e.which == 13 && selected.length != 0){
-            var href = selected.attr("href");
-            $('#search-box').val(selected.text());
+            var href = $(this).attr("href");
             loadContent(href);
+            e.preventDefault();
+        });
 
-             e.preventDefault();
-            $("#search-res").empty();
-        }
-        else if (e.which == 38){
-            if (selected.length != 0){
-                selected.prev().attr('id', 'search-sel');
-                selected.removeAttr("id");
-                $('#search-box').val(selected.prev().text());
+        window.onpopstate = function(event) {
+            loadContent(location.pathname);
+        };
+    } else {
+        //Login
+        $('#login').click(function(){
+            login ();
+        });
+        $('#pw').keypress(function (e) {
+            if (e.which == 13){
+                login ();
             }
-            else
-                $('#search-res a:last-child').attr('id', 'search-sel');
-            $('#search-box').val($('#search-sel').text());
-        } else if (e.which == 40){
-            if (selected.length != 0)
-            {
-                selected.next().attr('id', 'search-sel');
-                selected.removeAttr("id");
-            }
-            else
-                $('#search-res a:first-child').attr('id', 'search-sel');
-            $('#search-box').val($('#search-sel').text());
-        }
-        else {
-            var input = $(this).val();
-            if (input.trim() != "") {
-                $.post('/search', {search: input}, function (res) {
-                    $("#search-res").empty();
-                    var output = JSON.parse(res);
-                    
-                    for (var i = 0; i < output.length; i++)
-                        $("#search-res").append("<a href='/member/"+output[i][0]+"'>"+output[i][1]+" "+output[i][2]+"</a>");
-
-                    $('#search-res a').click(function(e){
-                        var href = $(this).attr("href");
-                        $('#search-box').val($(this).text());
-                        loadContent(href);
-                        $("#search-res").empty();
-
-                        e.preventDefault();
-                    });
-
-                    $('#search-res a').mouseover(function(){
-                        $('#search-sel').removeAttr("id");
-                        $(this).attr('id', 'search-sel');
-                    });
-
-
-                });
-            }
-            else
-                $("#search-res").empty();
-        }
-    });
+        });
+    }
 });
