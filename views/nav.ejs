@@ -119,17 +119,11 @@
                 </li>
                 <li>
                     <a><i class="fa fa-bar-chart-o fa-fw"></i> Groups<span class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
+                    <ul id="group-nav" class="nav nav-second-level">
                         <li>
                             <a style="font-style: italic;cursor:pointer;"data-toggle="modal" data-target="#newGroup">
                                 Create Group
                             </a>
-                        </li>
-                        <li>
-                            <a href="#">Group 1</a>
-                        </li>
-                        <li>
-                            <a href="#">Group 2</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
@@ -155,23 +149,27 @@
                 <form role="form">
                     <div class="form-group">
                         <label>Group name</label>
-                        <input class="form-control" placeholder="Name">
+                        <input id="g_name" class="form-control" placeholder="Name">
                     </div>
                     <div class="form-group">
                         <label>Description</label>
-                        <input id="description" class="form-control" placeholder="Description">
+                        <input id="g_desc" class="form-control" placeholder="Description">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="position:relative;">
                         <label>Members</label>
                         <p id="m_list"class="help-block"></p>
-                        <input id="member-box" type="text" class="form-control" placeholder="Add Member">
-                        <div id="member-res" class="search-res"></div>
+                        <div style="position:relative;">
+                            <input id="member-box" type="text" class="form-control" placeholder="Add Member">
+                            <div id="member-res" class="search-res"></div>
+                        </div>
                     </div>
                 </form>
             </div>
+            <div id="g-error" class='alert alert-danger' style="display: none; margin-bottom: 0"></div>
+            <div id="g-success" class='alert alert-success' style="display: none; margin-bottom: 0"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Create</button>
+                <button id="btn-create" type="button" class="btn btn-primary">Create</button>
             </div>
         </div>
         <!-- /.modal-content -->

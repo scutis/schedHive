@@ -14,6 +14,8 @@ var get_pm = require('./routes/get_pm');
 var add_pm = require('./routes/add_pm');
 var content = require('./routes/content');
 var list_pm = require('./routes/list_pm');
+var new_grp = require('./routes/new_grp');
+var list_grp = require('./routes/list_grp');
 
 var app = express();
 
@@ -49,18 +51,18 @@ app.use('/get_pm', get_pm);
 app.use('/add_pm', add_pm);
 app.use('/list_pm', list_pm);
 app.use('/content', content);
+app.use('/new_grp', new_grp);
+app.use('/list_grp', list_grp);
 
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    res.redirect('/'); //redirect to index
-    /*
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
-    */
+
 });
-/*
+
 // error handlers
 
 // development error handler
@@ -84,6 +86,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-*/
 
 module.exports = app;

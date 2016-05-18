@@ -8,11 +8,11 @@ $(function() {
         });
 
         $('#search-box').focusin(function() {
-            $('#search-res').attr("style", "display:block");
+            $('#search-res').show();
         });
 
         $('#search-box').focusout(function() {
-            $('#search-res').attr("style", "display:none");
+            $('#search-res').hide();
         });
 
         $('#search-res').mouseenter(function() {
@@ -21,7 +21,7 @@ $(function() {
 
         $('#search-res').mouseleave(function() {
             $('#search-box').focusout(function() {
-                $('#search-res').attr("style", "display:none");
+                $('#search-res').hide();
             });
         });
 
@@ -87,6 +87,27 @@ $(function() {
         });
     }
 
+    function updateGroup() {
+        $.post('/list_grp', {}, function (res) {
+            $("#group-nav").empty();
+            $("#group-nav").append("<li><a style='font-style: italic;cursor:pointer;' data-toggle='modal' data-target='#newGroup'>Create Group</a></li>");
+            var data = JSON.parse(res);
+            for (var i = 0; i < data.length; i++){
+                $("#group-nav").append("<li><a href='/group/"+data[i].g_id+"'>"+data[i].name+"</a></li>");
+            }
+
+            $('a[href]').unbind("click");
+
+            $('a[href]').click(function(e) {
+
+                var href = $(this).attr("href");
+                loadContent(href);
+                e.preventDefault();
+            });
+
+        });
+    }
+
     function createGroup(){
         var memberList = [];
         var memberName = [];
@@ -112,11 +133,11 @@ $(function() {
         });
 
         $('#member-box').focusin(function() {
-            $('#member-res').attr("style", "display:block");
+            $('#member-res').show();
         });
 
         $('#member-box').focusout(function() {
-            $('#member-res').attr("style", "display:none");
+            $('#member-res').hide();
         });
 
         $('#member-res').mouseenter(function() {
@@ -125,7 +146,7 @@ $(function() {
 
         $('#member-res').mouseleave(function() {
             $('#member-box').focusout(function() {
-                $('#member-res').attr("style", "display:none");
+                $('#member-res').hide();
             });
         });
 
@@ -199,9 +220,29 @@ $(function() {
         $('#newGroup').on('hidden.bs.modal', function () {
             memberList = [];
             memberName = [];
+            $('#g-error').hide();
+            $('#g-success').hide();
+            $('#g_name').val("");
+            $('#g_desc').val("");
             $('#m_list').empty();
             $('#member-res').empty();
             $('#member-box').val("");
+        });
+
+        $('#btn-create').click(function () {
+            $('#g-error').hide();
+            $('#g-success').hide();
+            if ($('#g_name').val().trim() == "" || $('#g_desc').val().trim() == ""){
+                $('#g-error').show();
+                $('#g-error').text("Invalid group name or description");
+            } else{
+                $.post('/new_grp', {name: $('#g_name').val(), desc: $('#g_desc').val(), m_list: JSON.stringify(memberList)}, function (res) {
+                    $('#g-success').show();
+                    $('#g-success').text("Group "+$('#g_name').val()+" successfully created");
+                    $('#newGroup').trigger('hidden.bs.modal');
+                    updateGroup();
+                });
+            }
         });
     }
 
@@ -245,6 +286,7 @@ $(function() {
     }
 
     function update_pm(){
+        $(".notif-count").hide();
         $.post('/list_pm', {sel: "unread"}, function (res) {
             $("#pm-nav").empty();
             var data = JSON.parse(res);
@@ -253,13 +295,12 @@ $(function() {
             }
 
             if (data.length == 0){
-                $("#pm-nav").append("<li><a class='text-center'><em style='cursor:default;'>No new messages</em></a></li><li class='divider'></li>");
+                $("#pm-nav").append("<li class='text-center'><em style='cursor:default;'>No new messages</em></li><li class='divider'></li>");
                 $("#pm-nav").append("<li><a class='text-center' href='/pm'><strong>View All Conversations</strong><i class='fa fa-angle-right'></i></a></li>");
-                $(".notif-count").attr("style", "display:none;");
             } else{
                 $("#pm-nav").append("<li><a class='text-center' href='/pm/unread'><strong>View New Messages</strong><i class='fa fa-angle-right'></i></a></li>");
                 $(".notif-count").text(data.length);
-                $(".notif-count").remove("style", "display:block;");
+                $(".notif-count").show();
             }
 
             $('a[href]').unbind("click");
@@ -328,6 +369,7 @@ $(function() {
 
     function loadContent(href){
         update_pm();
+        updateGroup();
         var input = href.split("/");
         if (input[1] == 'logout') {
             window.location.href = '/logout';
@@ -354,6 +396,17 @@ $(function() {
                         if (input.length == 4){
                             list_pm(input[2]);
                             get_pm(input[3]);
+
+                            $("#send").unbind("click");
+                            $("#refresh").unbind("click");
+
+                            $('#refresh').click(function () {
+                                get_pm(input[3]);
+                            });
+
+                            $('#send').click(function () {
+                                add_pm(input[3]);
+                            });
                             href = input[0] + input[1] + input[2];
                         }
                         else if (input.length == 3)
@@ -385,7 +438,7 @@ $(function() {
         $.post('/login', {u_name: username, pw: password}, function (res){
             if (res == "false") {
                 $('#login-error').show();
-                $('#login-error').html("Invalid Credentials");
+                $('#login-error').text("Invalid Credentials");
             }
             else if (res == "true")
                 window.location.href = '/';

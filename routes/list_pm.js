@@ -43,6 +43,7 @@ router.post('/', function(req, res){
                             result[i].m_id = m_id;
                             connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [m_id], function (err, output) {
                                 if (err) {
+                                    connection.release();
                                     res.sendStatus(500);
                                     return;
                                 }

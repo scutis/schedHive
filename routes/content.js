@@ -44,6 +44,25 @@ router.post('/', function(req, res){
                 res.render('pm', {selected: req.body.id});
 
                 break;
+            case 'group':
+
+                mysql.connect(res, function(connection){
+                    connection.query('SELECT * FROM g_list WHERE id = ?', [req.body.id], function (err, result) {
+                        connection.release();
+                        if (err){
+                            res.sendStatus(500);
+                            return;
+                        }
+
+                        var param = {
+                            g_id: result[0].id, name: result[0].name, info: result[0].info, t: result[0].t
+                        };
+
+                        res.render('group', param);
+                    });
+                });
+
+                break;
             default:
                 res.sendStatus(404);
         }

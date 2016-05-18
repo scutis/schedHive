@@ -16,6 +16,7 @@ router.post('/', function(req, res){
             connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [req.body.m_id], function (err, result) {
 
                 if (err){
+                    connection.release();
                     res.sendStatus(500);
                     return;
                 }
@@ -25,9 +26,11 @@ router.post('/', function(req, res){
 
                 connection.query('SELECT u_from, data, t, u_read FROM p_table WHERE (u_from = ? AND u_to = ?) OR (u_from = ? AND u_to = ?)', [req.session.user.id, req.body.m_id, req.body.m_id, req.session.user.id], function (err, result) {
                     if (err){
+                        connection.release();
                         res.sendStatus(500);
                         return;
                     }
+                    
                     if (result.length != 0) {
                         data.o = result;
 
