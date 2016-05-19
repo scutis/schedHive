@@ -253,12 +253,12 @@ $(function() {
             var data = JSON.parse(res);
             for (var i = 0; i < data.o.length; i++){
                 if (data.o[i].u_from == m_id) {
-                    $("#pm-list").append("<li class='right clearfix'> <span class='pm-img pull-right'> <div class='img-circle avatar-right'><p>"+data.m.f_name.charAt(0).toUpperCase()+data.m.l_name.charAt(0).toUpperCase()+"</p></div> </span> <div class='pm-body clearfix'> <div class='header'> <small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i> "+ data.o[i].t +"</small> <strong class='pull-right primary-font'>"+ data.m.f_name +" " + data.m.l_name+"</strong> </div> <p class='justify'>"+ data.o[i].data +"</p> </div> </li>");
+                    $("#pm-list").append("<li class='right clearfix'><span class='pm-img pull-right'><div class='img-circle avatar-right'><p>"+data.m.f_name.charAt(0).toUpperCase()+data.m.l_name.charAt(0).toUpperCase()+"</p></div></span><div class='pm-body clearfix'><div class='header'><small class='text-muted'><i class='fa fa-clock-o fa-fw'></i> "+ data.o[i].t +"</small><strong class='pull-right primary-font'>"+ data.m.f_name +" " + data.m.l_name+"</strong></div><p class='justify'>"+ data.o[i].data +"</p></div></li>");
                     if (!data.o[i].u_read){
                         $("#pm-list li:last").addClass("to-read");
                     }
                 } else{
-                    $("#pm-list").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>"+data.u.f_name.charAt(0).toUpperCase()+data.u.l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>"+ data.u.f_name +" "+ data.u.l_name+ "</strong> <small class='pull-right text-muted'> <i class='fa fa-clock-o fa-fw'></i> "+ data.o[i].t +" </small> </div> <p class='justify'>"+ data.o[i].data +"</p> </div> </li>");
+                    $("#pm-list").append("<li class='left clearfix'><span class='pm-img pull-left'><div class='img-circle avatar-left'><p>"+data.u.f_name.charAt(0).toUpperCase()+data.u.l_name.charAt(0).toUpperCase()+"</p></div></span><div class='pm-body clearfix'><div class='header'><strong class='primary-font'>"+ data.u.f_name +" "+ data.u.l_name+ "</strong><small class='pull-right text-muted'><i class='fa fa-clock-o fa-fw'></i> "+ data.o[i].t +"</small></div><p class='justify'>"+ data.o[i].data +"</p></div></li>");
                 }
             }
 
@@ -321,7 +321,7 @@ $(function() {
             $("#conv_title").empty();
             var data = JSON.parse(res);
             for (var i = 0; i < data.length; i++){
-                $("#conv-list").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-right'><p>"+data[i].f_name.charAt(0).toUpperCase()+data[i].l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='conv-body clearfix'> <div class='header'> <strong class='primary-font'>"+ data[i].f_name +" "+ data[i].l_name+ "</strong> </div> <p class='justify text-muted'>"+ data[i].data +"<span class='pull-right'> <i class='fa fa-arrow-circle-right fa-fw'></i></span></p> <small class='text-muted pull-left'> <i class='fa fa-clock-o fa-fw'></i> "+ data[i].t +" </small> </div> </li>");
+                $("#conv-list").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-right'><p>"+data[i].f_name.charAt(0).toUpperCase()+data[i].l_name.charAt(0).toUpperCase()+"</p></div></span><div class='conv-body clearfix'><div class='header'><strong class='primary-font'>"+ data[i].f_name +" "+ data[i].l_name+ "</strong></div><p class='justify text-muted'>"+ data[i].data +"<span class='pull-right'><i class='fa fa-arrow-circle-right fa-fw'></i></span></p><small class='text-muted pull-left'><i class='fa fa-clock-o fa-fw'></i> "+ data[i].t +"</small></div></li>");
                 $("#conv-list li:last").attr("m_id", data[i].m_id);
                 if (!data[i].u_read && data[i].u_from == data[i].m_id){
                     $("#conv-list li:last").addClass("to-read");
