@@ -111,18 +111,26 @@ $(function() {
     function createGroup(){
         var memberList = [];
         var memberName = [];
+        var memberLevel = [];
 
 
         function print_members(){
             $('#m_list').empty();
             for (var i = 0; i < memberList.length; i++){
-                $('#m_list').append("<span m_id="+memberList[i]+">"+memberName[memberList[i]]+"<i style='cursor: pointer;' class='fa fa-times fa-fw'></i>| </span>");
+                $('#m_list').append("<span m_id="+memberList[i]+">"+memberName[memberList[i]]+"<sup id='m_lvl' style='cursor: pointer;'> ("+memberLevel[memberList[i]]+")</sup></span><i id='m_rmv' style='cursor: pointer;' class='fa fa-times fa-fw'></i> | ");
             }
 
-            $('#m_list span i').unbind("click");
-            $('#m_list span i').click(function(){
+            $('#m_list #m_rmv').unbind("click");
+            $('#m_list #m_rmv').click(function(){
                 memberList.splice(memberList.indexOf(parseInt($(this).closest('span').attr("m_id"))), 1);
-                print_members(memberList, memberName);
+                print_members();
+            });
+
+            $('#m_list #m_lvl').unbind("click");
+            $('#m_list #m_lvl').click(function(e){
+                memberLevel[$(this).closest('span').attr('m_id')]++;
+                memberLevel[$(this).closest('span').attr('m_id')] %= 3;
+                print_members();
             });
         }
 
@@ -157,7 +165,8 @@ $(function() {
                 $('#member-box').val("");
                 memberList.push(m_id);
                 memberName[m_id] = selected.text();
-                print_members(memberList, memberName);
+                memberLevel[m_id] = 0;
+                print_members();
 
                 e.preventDefault();
 
@@ -199,7 +208,8 @@ $(function() {
                             $('#member-box').val("");
                             memberList.push(m_id);
                             memberName[m_id] = $(this).text();
-                            print_members(memberList, memberName);
+                            memberLevel[m_id] = 0;
+                            print_members();
                             $("#member-res").empty();
                             e.preventDefault();
                         });
@@ -220,6 +230,7 @@ $(function() {
         $('#newGroup').on('hidden.bs.modal', function () {
             memberList = [];
             memberName = [];
+            memberLevel = [];
             $('#g-error').hide();
             $('#g-success').hide();
             $('#g_name').val("");
@@ -236,11 +247,11 @@ $(function() {
                 $('#g-error').show();
                 $('#g-error').text("Invalid group name or description");
             } else{
-                $.post('/new_grp', {name: $('#g_name').val(), desc: $('#g_desc').val(), m_list: JSON.stringify(memberList)}, function (res) {
-                    $('#g-success').show();
-                    $('#g-success').text("Group "+$('#g_name').val()+" successfully created");
+                $.post('/new_grp', {name: $('#g_name').val(), desc: $('#g_desc').val(), m_list: JSON.stringify(memberList), m_lvl: JSON.stringify(memberLevel)}, function (res) {
                     $('#newGroup').trigger('hidden.bs.modal');
                     updateGroup();
+                    $('#g-success').show();
+                    $('#g-success').text("Group "+$('#g_name').val()+" successfully created");
                 });
             }
         });

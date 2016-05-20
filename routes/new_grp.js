@@ -12,6 +12,7 @@ router.post('/', function(req, res) {
         };
 
         var memberList = JSON.parse(req.body.m_list);
+        var memberLevel = JSON.parse(req.body.m_lvl);
 
         mysql.connect(res, function(connection){
             connection.query('INSERT INTO g_list SET ?', entryList, function (err, result) {
@@ -27,7 +28,7 @@ router.post('/', function(req, res) {
 
                 for (var i = 0; i < memberList.length; i++){
 
-                    var member = [result.insertId, memberList[i], 0];
+                    var member = [result.insertId, memberList[i], memberLevel[memberList[i]]];
 
                     entryMember.push(member);
                 }

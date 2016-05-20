@@ -3,8 +3,12 @@
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">Group / <%= name %>
-            <button id="edit_group" type="button" class="btn btn-primary" data-toggle="modal" data-target="#editGroup">Edit Group</button>
-            <button id="new_thread" type="button" class="btn btn-primary" data-toggle="modal" data-target="#newThread">New Thread</button>
+            <% if (user_lvl >= 2){%>
+            <button id="edit_group" type="button" style="margin: 0; padding: 2px;" class="btn btn-primary" data-toggle="modal" data-target="#editGroup">Edit Group</button>
+            <%}%>
+            <%if (user_lvl >= 1){%>
+            <button id="new_thread" type="button" style="margin: 0; padding: 2px;" class="btn btn-primary" data-toggle="modal" data-target="#newThread">New Thread</button>
+            <%}%>
         </h1>
     </div>
     <!-- /.col-lg-12 -->
@@ -140,10 +144,21 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-               <ul>
-                   <li>Member 1</li>
-                   <li>Member 2</li>
-                   <li>Member 3</li>
+               <ul class="list-unstyled">
+                   <%for (var i = 0; i < memberList.length; i++){%>
+                        <li>
+                            <% if (memberList[i].u_id != user_id){%>
+                                <a href="/member/<%= memberList[i].u_id%>"><%= memberList[i].name%></a>
+                            <%} else{%>
+                                <%= memberList[i].name%>
+                            <%}%>
+                            <% if (memberList[i].lvl == 2){%>
+                                (admin)
+                            <%} else if (memberList[i].lvl == 1){%>
+                                (mod)
+                            <%}%>
+                        </li>
+                   <%}%>
                </ul>
             </div>
             <!-- /.panel-body -->
