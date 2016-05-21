@@ -16,6 +16,7 @@ var content = require('./routes/content');
 var list_pm = require('./routes/list_pm');
 var new_grp = require('./routes/new_grp');
 var list_grp = require('./routes/list_grp');
+var edit_grp = require('./routes/edit_grp');
 
 var app = express();
 
@@ -53,6 +54,7 @@ app.use('/list_pm', list_pm);
 app.use('/content', content);
 app.use('/new_grp', new_grp);
 app.use('/list_grp', list_grp);
+app.use('/edit_grp', edit_grp);
 
 
 // catch 404 and forward to error handler

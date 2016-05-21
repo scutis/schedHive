@@ -19,7 +19,7 @@ connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT,
 
 connection.query('CREATE TABLE g_list (id INT unsigned PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), info VARCHAR(255), t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 connection.query('CREATE TABLE g_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, r_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
-connection.query('CREATE TABLE g_member (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, lvl INT unsigned, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE g_member (g_id INT unsigned, u_id INT unsigned, lvl INT unsigned)');
 
 connection.query('CREATE TABLE notif (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_id INT unsigned, data VARCHAR(255), href VARCHAR(255) , t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 

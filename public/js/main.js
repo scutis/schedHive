@@ -1,49 +1,47 @@
 $(function() {
 
-    function searchBox (){
+    function searchTool(targetBox, targetRes, enterFunction, appendFunction){
         //Avoid default change in cursor position (arrow up/down)
-        $('#search-box').keydown(function(e) {
+        $(targetBox).keydown(function(e) {
             if (e.which === 38 || e.which === 40)
                 e.preventDefault();
         });
 
-        $('#search-box').focusin(function() {
-            $('#search-res').show();
+        $(targetBox).focusin(function() {
+            $(targetRes).show();
         });
 
-        $('#search-box').focusout(function() {
-            $('#search-res').hide();
+        $(targetBox).focusout(function() {
+            $(targetRes).hide();
         });
 
-        $('#search-res').mouseenter(function() {
-            $('#search-box').unbind("focusout");
+        $(targetRes).mouseenter(function() {
+            $(targetBox).unbind("focusout");
         });
 
-        $('#search-res').mouseleave(function() {
-            $('#search-box').focusout(function() {
-                $('#search-res').hide();
+        $(targetRes).mouseleave(function() {
+            $(targetBox).focusout(function() {
+                $(targetRes).hide();
             });
         });
 
-        $('#search-box').keyup(function(e){
-            var selected = $('#search-res .search-sel');
+        $(targetBox).keyup(function(e){
+            var selected = $(targetRes+' .search-sel');
             if (e.which == 13 && selected.length != 0){
-                var href = selected.attr("href");
-                $('#search-box').val(selected.text());
-                loadContent(href);
+                enterFunction(selected);
 
                 e.preventDefault();
-                $("#search-res").empty();
+                $(targetRes).empty();
             }
             else if (e.which == 38){
                 if (selected.length != 0){
                     selected.prev().addClass('search-sel');
                     selected.removeClass('search-sel');
-                    $('#search-box').val(selected.prev().text());
+                    $(targetBox).val(selected.prev().text());
                 }
                 else
-                    $('#search-res a:last-child').addClass('search-sel');
-                $('#search-box').val($('#search-res .search-sel').text());
+                    $(targetRes+' a:last-child').addClass('search-sel');
+                $(targetBox).val($(targetRes+' .search-sel').text());
             } else if (e.which == 40){
                 if (selected.length != 0)
                 {
@@ -51,30 +49,28 @@ $(function() {
                     selected.removeClass('search-sel');
                 }
                 else
-                    $('#search-res a:first-child').addClass('search-sel');
-                $('#search-box').val($('#search-res .search-sel').text());
+                    $(targetRes+' a:first-child').addClass('search-sel');
+                $(targetBox).val($(targetRes+' .search-sel').text());
             }
             else {
                 var input = $(this).val();
                 if (input.trim() != "") {
                     $.post('/search', {search: input}, function (res) {
-                        $("#search-res").empty();
+                        $(targetRes).empty();
                         var output = JSON.parse(res);
 
                         for (var i = 0; i < output.length; i++)
-                            $("#search-res").append("<a href='/member/"+output[i][0]+"'>"+output[i][1]+" "+output[i][2]+"</a>");
+                            appendFunction(targetRes, output[i]);
 
-                        $('#search-res a').click(function(e){
-                            var href = $(this).attr("href");
-                            $('#search-box').val($(this).text());
-                            loadContent(href);
-                            $("#search-res").empty();
+                        $(targetRes+' a').click(function(e){
+                            enterFunction($(this));
 
                             e.preventDefault();
+                            $(targetRes).empty();
                         });
 
-                        $('#search-res a').mouseover(function(){
-                            $('#search-res .search-sel').removeClass('search-sel');
+                        $(targetRes+' a').mouseover(function(){
+                            $(targetRes+' .search-sel').removeClass('search-sel');
                             $(this).addClass('search-sel');
                         });
 
@@ -82,8 +78,19 @@ $(function() {
                     });
                 }
                 else
-                    $("#search-res").empty();
+                    $(targetRes).empty();
             }
+        });
+    }
+
+    function searchBox (){
+
+        searchTool('#search-box', '#search-res', function(selected){
+            var href = selected.attr("href");
+            $('#search-box').val(selected.text());
+            loadContent(href);
+        }, function(targetRes, output){
+            $(targetRes).append("<a href='/member/"+output[0]+"'>"+output[1]+" "+output[2]+"</a>");
         });
     }
 
@@ -108,124 +115,49 @@ $(function() {
         });
     }
 
+    function print_members(list_sel, memberList, memberName, memberLevel){
+        $(list_sel).empty();
+        for (var i = 0; i < memberList.length; i++){
+            $(list_sel).append("<span data-m_id="+memberList[i]+">"+memberName[i]+"<sup id='m_lvl' style='cursor: pointer;'> ("+memberLevel[i]+")</sup><i id='m_rmv' style='cursor: pointer;' class='fa fa-times fa-fw'></i></span> | ");
+        }
+
+        $(list_sel+' #m_rmv').unbind("click");
+        $(list_sel+' #m_rmv').click(function(){
+            var index = memberList.indexOf(parseInt($(this).closest('span').attr("data-m_id")));
+            memberList.splice(index, 1);
+            memberName.splice(index, 1);
+            memberLevel.splice(index, 1);
+
+            print_members(list_sel, memberList, memberName, memberLevel);
+        });
+
+        $(list_sel+' #m_lvl').unbind("click");
+        $(list_sel+' #m_lvl').click(function(e){
+            var index = memberList.indexOf(parseInt($(this).closest('span').attr("data-m_id")));
+            memberLevel[index]++;
+            memberLevel[index] %= 3;
+            print_members(list_sel, memberList, memberName, memberLevel);
+        });
+    }
+
     function createGroup(){
+
         var memberList = [];
         var memberName = [];
         var memberLevel = [];
 
 
-        function print_members(){
-            $('#m_list').empty();
-            for (var i = 0; i < memberList.length; i++){
-                $('#m_list').append("<span m_id="+memberList[i]+">"+memberName[memberList[i]]+"<sup id='m_lvl' style='cursor: pointer;'> ("+memberLevel[memberList[i]]+")</sup></span><i id='m_rmv' style='cursor: pointer;' class='fa fa-times fa-fw'></i> | ");
-            }
-
-            $('#m_list #m_rmv').unbind("click");
-            $('#m_list #m_rmv').click(function(){
-                memberList.splice(memberList.indexOf(parseInt($(this).closest('span').attr("m_id"))), 1);
-                print_members();
-            });
-
-            $('#m_list #m_lvl').unbind("click");
-            $('#m_list #m_lvl').click(function(e){
-                memberLevel[$(this).closest('span').attr('m_id')]++;
-                memberLevel[$(this).closest('span').attr('m_id')] %= 3;
-                print_members();
-            });
-        }
-
-        //Avoid default change in cursor position (arrow up/down)
-        $('#member-box').keydown(function(e) {
-            if (e.which === 38 || e.which === 40)
-                e.preventDefault();
-        });
-
-        $('#member-box').focusin(function() {
-            $('#member-res').show();
-        });
-
-        $('#member-box').focusout(function() {
-            $('#member-res').hide();
-        });
-
-        $('#member-res').mouseenter(function() {
-            $('#member-box').unbind("focusout");
-        });
-
-        $('#member-res').mouseleave(function() {
-            $('#member-box').focusout(function() {
-                $('#member-res').hide();
-            });
-        });
-
-        $('#member-box').keyup(function(e){
-            var selected = $('#member-res .search-sel');
-            if (e.which == 13 && selected.length != 0){
-                var m_id = parseInt(selected.attr("m_id"));
-                $('#member-box').val("");
-                memberList.push(m_id);
-                memberName[m_id] = selected.text();
-                memberLevel[m_id] = 0;
-                print_members();
-
-                e.preventDefault();
-
-                $("#member-res").empty();
-            }
-            else if (e.which == 38){
-                if (selected.length != 0){
-                    selected.prev().addClass('search-sel');
-                    selected.removeClass('search-sel');
-                    $('#member-box').val(selected.prev().text());
-                }
-                else
-                    $('#member-res a:last-child').addClass('search-sel');
-                $('#member-box').val($('#member-res .search-sel').text());
-            } else if (e.which == 40){
-                if (selected.length != 0)
-                {
-                    selected.next().addClass('search-sel');
-                    selected.removeClass('search-sel');
-                }
-                else
-                    $('#member-res a:first-child').addClass('search-sel');
-                $('#member-box').val($('#member-res .search-sel').text());
-            }
-            else {
-                var input = $(this).val();
-                if (input.trim() != "") {
-                    $.post('/search', {search: input}, function (res) {
-                        $("#member-res").empty();
-                        var output = JSON.parse(res);
-
-                        for (var i = 0; i < output.length; i++) {
-                            if (memberList.indexOf(output[i][0]) <= -1)
-                                $("#member-res").append("<a m_id='" + output[i][0] + "'>" + output[i][1] + " " + output[i][2] + "</a>");
-                        }
-
-                        $('#member-res a').click(function(e){
-                            var m_id = parseInt($(this).attr("m_id"));
-                            $('#member-box').val("");
-                            memberList.push(m_id);
-                            memberName[m_id] = $(this).text();
-                            memberLevel[m_id] = 0;
-                            print_members();
-                            $("#member-res").empty();
-                            e.preventDefault();
-                        });
-
-                        $('#member-res a').mouseover(function(){
-                            $('#member-res .search-sel').removeClass('search-sel');
-                            $(this).addClass('search-sel');
-                        });
-
-
-                    });
-                }
-                else
-                    $("#member-res").empty();
-            }
-        });
+         searchTool('#member-box', '#member-res', function(selected){
+             var m_id = parseInt(selected.attr("data-m_id"));
+             $('#member-box').val("");
+             memberList.push(m_id);
+             memberName.push(selected.text());
+             memberLevel.push(0);
+             print_members("#m_list", memberList, memberName, memberLevel);
+         }, function(targetRes, output){
+             if (memberList.indexOf(output[0]) <= -1)
+                 $("#member-res").append("<a data-m_id='" + output[0] + "'>" + output[1] + " " + output[2] + "</a>");
+         });
 
         $('#newGroup').on('hidden.bs.modal', function () {
             memberList = [];
@@ -241,8 +173,6 @@ $(function() {
         });
 
         $('#btn-create').click(function () {
-            $('#g-error').hide();
-            $('#g-success').hide();
             if ($('#g_name').val().trim() == "" || $('#g_desc').val().trim() == ""){
                 $('#g-error').show();
                 $('#g-error').text("Invalid group name or description");
@@ -252,6 +182,54 @@ $(function() {
                     updateGroup();
                     $('#g-success').show();
                     $('#g-success').text("Group "+$('#g_name').val()+" successfully created");
+                });
+            }
+        });
+    }
+
+    function editGroup(g_id){
+        var memberList = [];
+        var memberName = [];
+        var memberLevel = [];
+
+        searchTool('#edit-member-box', '#edit-member-res', function(selected){
+            var m_id = parseInt(selected.attr("data-m_id"));
+            $('#edit-member-box').val("");
+            memberList.push(m_id);
+            memberName.push(selected.text());
+            memberLevel.push(0);
+            print_members("#edit-m_list", memberList, memberName, memberLevel);
+        }, function(targetRes, output){
+            if (memberList.indexOf(output[0]) <= -1)
+                $(targetRes).append("<a data-m_id='" + output[0] + "'>" + output[1] + " " + output[2] + "</a>");
+        });
+
+        $('#editGroup').on('show.bs.modal', function () {
+            memberList = JSON.parse($('#edit-m_list').attr("data-m_list"));
+            memberName = JSON.parse($('#edit-m_list').attr("data-m_name"));
+            memberLevel = JSON.parse($('#edit-m_list').attr("data-m_lvl"));
+            $('#edit-g-error').hide();
+            $('#edit-g-success').hide();
+            $('#edit-g_name').val($('#edit-g_name').attr("data-val"));
+            $('#edit-g_desc').val($('#edit-g_desc').attr("data-val"));
+            $('#edit-member-res').empty();
+            $('#edit-member-box').val("");
+            print_members("#edit-m_list", memberList, memberName, memberLevel);
+        });
+
+        $('#btn-edit').click(function () {
+            if ($('#edit-g_name').val().trim() == "" || $('#edit-g_desc').val().trim() == ""){
+                $('#edit-g-error').show();
+                $('#edit-g-error').text("Invalid group name or description");
+            } else{
+                $.post('/edit_grp', {g_id: g_id, name: $('#edit-g_name').val(), desc: $('#edit-g_desc').val(), m_list: JSON.stringify(memberList), m_lvl: JSON.stringify(memberLevel)}, function (res) {
+                    $('#edit-g-success').text("Group "+$('#g_name').val()+" successfully updated");
+                    $('#edit-g-success').show();
+
+                    $('#editGroup').on('hidden.bs.modal', function () {
+                        loadContent(window.location.pathname);
+                    });
+
                 });
             }
         });
@@ -333,7 +311,7 @@ $(function() {
             var data = JSON.parse(res);
             for (var i = 0; i < data.length; i++){
                 $("#conv-list").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-right'><p>"+data[i].f_name.charAt(0).toUpperCase()+data[i].l_name.charAt(0).toUpperCase()+"</p></div></span><div class='conv-body clearfix'><div class='header'><strong class='primary-font'>"+ data[i].f_name +" "+ data[i].l_name+ "</strong></div><p class='justify text-muted'>"+ data[i].data +"<span class='pull-right'><i class='fa fa-arrow-circle-right fa-fw'></i></span></p><small class='text-muted pull-left'><i class='fa fa-clock-o fa-fw'></i> "+ data[i].t +"</small></div></li>");
-                $("#conv-list li:last").attr("m_id", data[i].m_id);
+                $("#conv-list li:last").attr("data-m_id", data[i].m_id);
                 if (!data[i].u_read && data[i].u_from == data[i].m_id){
                     $("#conv-list li:last").addClass("to-read");
                 }
@@ -351,7 +329,7 @@ $(function() {
             }
 
             $("#conv-list li").click(function () {
-                var m_id = $(this).attr("m_id");
+                var m_id = $(this).attr("data-m_id");
                 $(this).removeClass("to-read");
                 get_pm(m_id);
 
@@ -433,6 +411,12 @@ $(function() {
                         $('#unread_pm').click(function () {
                             list_pm("unread");
                         });
+
+                        break;
+                    case 'group':
+                        editGroup(input[2]);
+
+
 
                         break;
                 }

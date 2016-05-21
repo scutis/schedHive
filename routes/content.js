@@ -58,7 +58,7 @@ router.post('/', function(req, res){
                             user_id: req.session.user.id, g_id: result[0].id, name: result[0].name, info: result[0].info, t: result[0].t
                         };
 
-                        connection.query('SELECT * FROM g_member WHERE g_id = ? ORDER BY lvl DESC', [param.g_id], function (err, result) {
+                        connection.query('SELECT u_id, lvl FROM g_member WHERE g_id = ? ORDER BY lvl DESC', [param.g_id], function (err, result) {
 
                             if (err){
                                 connection.release();

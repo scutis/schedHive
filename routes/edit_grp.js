@@ -15,7 +15,7 @@ router.post('/', function(req, res) {
         var memberLevel = JSON.parse(req.body.m_lvl);
 
         mysql.connect(res, function(connection){
-            connection.query('INSERT INTO g_list SET ?', [entryList], function (err, result) {
+            connection.query('UPDATE g_list SET ? WHERE id = ?', [entryList, req.body.g_id], function (err, result) {
                 if (err) {
                     connection.release();
                     res.sendStatus(500);
@@ -23,24 +23,32 @@ router.post('/', function(req, res) {
                 }
 
                 var entryMember = [
-                    [result.insertId, req.session.user.id, 2]
+                    [req.body.g_id, req.session.user.id, 2]
                 ];
 
                 for (var i = 0; i < memberList.length; i++){
 
-                    var member = [result.insertId, memberList[i], memberLevel[i]];
-
+                    var member = [req.body.g_id, memberList[i], memberLevel[i]];
                     entryMember.push(member);
                 }
 
-                connection.query('INSERT INTO g_member (g_id, u_id, lvl) VALUES ?', [entryMember], function (err) {
-                    connection.release();
+                connection.query('DELETE FROM g_member WHERE g_id = ?', [req.body.g_id], function (err) {
                     if (err) {
+                        connection.release();
                         res.sendStatus(500);
                         return;
                     }
 
-                    res.sendStatus(200);
+
+                    connection.query('INSERT INTO g_member (g_id, u_id, lvl) VALUES ?', [entryMember], function (err) {
+                        connection.release();
+                        if (err) {
+                            res.sendStatus(500);
+                            return;
+                        }
+
+                        res.sendStatus(200);
+                    });
                 });
             });
         });
