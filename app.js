@@ -17,6 +17,7 @@ var list_pm = require('./routes/list_pm');
 var new_grp = require('./routes/new_grp');
 var list_grp = require('./routes/list_grp');
 var edit_grp = require('./routes/edit_grp');
+var new_thrd = require('./routes/new_thrd');
 
 var app = express();
 
@@ -38,6 +39,8 @@ app.use('/font-awesome', express.static(__dirname + '/node_modules/font-awesome/
 app.use('/html5shiv', express.static(__dirname + '/node_modules/html5shiv/dist/'));
 app.use('/respond', express.static(__dirname + '/node_modules/respond.js/dest/'));
 app.use('/metismenu', express.static(__dirname + '/node_modules/metismenu/dist/'));
+app.use('/timepicker', express.static(__dirname + '/node_modules/timepicker/'));
+app.use('/datepair', express.static(__dirname + '/node_modules/datepair.js/dist'));
 
 
 //Import session
@@ -55,6 +58,7 @@ app.use('/content', content);
 app.use('/new_grp', new_grp);
 app.use('/list_grp', list_grp);
 app.use('/edit_grp', edit_grp);
+app.use('/new_thrd', new_thrd);
 
 
 // catch 404 and forward to error handler

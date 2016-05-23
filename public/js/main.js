@@ -174,14 +174,14 @@ $(function() {
 
         $('#btn-create').click(function () {
             if ($('#g_name').val().trim() == "" || $('#g_desc').val().trim() == ""){
-                $('#g-error').show();
                 $('#g-error').text("Invalid group name or description");
+                $('#g-error').show();
             } else{
                 $.post('/new_grp', {name: $('#g_name').val(), desc: $('#g_desc').val(), m_list: JSON.stringify(memberList), m_lvl: JSON.stringify(memberLevel)}, function (res) {
                     $('#newGroup').trigger('hidden.bs.modal');
                     updateGroup();
-                    $('#g-success').show();
                     $('#g-success').text("Group "+$('#g_name').val()+" successfully created");
+                    $('#g-success').show();
                 });
             }
         });
@@ -219,8 +219,8 @@ $(function() {
 
         $('#btn-edit').click(function () {
             if ($('#edit-g_name').val().trim() == "" || $('#edit-g_desc').val().trim() == ""){
-                $('#edit-g-error').show();
                 $('#edit-g-error').text("Invalid group name or description");
+                $('#edit-g-error').show();
             } else{
                 $.post('/edit_grp', {g_id: g_id, name: $('#edit-g_name').val(), desc: $('#edit-g_desc').val(), m_list: JSON.stringify(memberList), m_lvl: JSON.stringify(memberLevel)}, function (res) {
                     $('#edit-g-success').text("Group "+$('#g_name').val()+" successfully updated");
@@ -355,6 +355,121 @@ $(function() {
 
         });
     }
+    
+    function dateTime(optionNumber){
+        // initialize input widgets first
+        $("p[data-num='"+optionNumber+"'] .time").timepicker({
+            'showDuration': true,
+            'timeFormat': 'g:ia'
+        });
+
+        $("p[data-num='"+optionNumber+"'] .date").datepicker({
+            'format': 'dd-mm-yyyy',
+            'autoclose': true
+        });
+
+        // initialize datepair
+        $("p[data-num='"+optionNumber+"']").datepair();
+    }
+
+    function newThread(){
+        
+        var optionNumber = 0;
+        var optionList = [];
+        var emptyFileList =  $("#t-file")[0].files;
+
+        $('#add-sched').click(function(){
+            $("#t-sched").append("<p data-num='"+optionNumber+"'><input type='text' class='form-control date start'><input type='text' class='form-control time start'> to<input type='text' class='form-control time end'><input type='text' class='form-control date end' disabled='disabled'><i style='cursor: pointer;' class='fa fa-times fa-fw'></i></p>");
+
+            dateTime(optionNumber);
+
+            $("p[data-num='"+optionNumber+"'] i").click(function(){
+                optionList.splice(optionList.indexOf(parseInt($(this).closest('p').attr("data-num"))), 1);
+                $(this).closest('p').remove();
+            });
+
+            optionList.push(optionNumber);
+            optionNumber++;
+        });
+
+        
+
+        $('#newThread').on('hidden.bs.modal', function () {
+            optionList = [];
+            optionNumber = 0;
+
+            $("#t-sched p").remove();
+
+            $('#t-title').val("");
+            $('#t-msg').val("");
+
+            $("#t-file")[0].files = emptyFileList ;
+
+            $('#t-error').hide();
+            $('#t-success').hide();
+        });
+
+
+
+        $('#btn-thread').click(function () {
+            if ($('#t-title').val().trim() == "" || $('#t-msg').val().trim() == ""){
+                $('#t-error').text("Invalid thread title or message");
+                $('#t-error').show();
+            } else{
+
+
+                var schedList = [];
+
+                for (var i = 0; i < optionList.length; i++){
+                    var dateStart = $("p[data-num='"+optionList[i]+"'] .date.start");
+                    var dateEnd = $("p[data-num='"+optionList[i]+"'] .date.end");
+                    var timeStart = $("p[data-num='"+optionList[i]+"'] .time.start");
+                    var timeEnd = $("p[data-num='"+optionList[i]+"'] .time.end");
+
+                    var fromDate = new Date(dateStart.datepicker("getDate").getFullYear(),
+                        dateStart.datepicker("getDate").getMonth(),
+                        dateStart.datepicker("getDate").getDate(),
+                        timeStart.timepicker("getTime").getHours(),
+                        timeStart.timepicker("getTime").getMinutes(), 0, 0);
+
+                    var toDate = new Date(dateEnd.datepicker("getDate").getFullYear(),
+                        dateEnd.datepicker("getDate").getMonth(),
+                        dateEnd.datepicker("getDate").getDate(),
+                        timeEnd.timepicker("getTime").getHours(),
+                        timeEnd.timepicker("getTime").getMinutes(), 0, 0);
+
+                    schedList.push({from: fromDate.getTime(), to: toDate.getTime()});
+                }
+
+                var inputFiles = $("#t-file")[0].files;
+                var fileList = [];
+
+
+                for (var j = 0; j < inputFiles.length; j++){
+                    var reader = new FileReader();
+                    reader.readAsText(inputFiles[j], 'UTF-8');
+                    reader.onload = function (event) {
+                        fileList.push({name: inputFiles[fileList.length].name, data: event.target.result});
+
+                        if (fileList.length == inputFiles.length){
+                            $.post('/new_thrd', {title: $('#t-title').val(), msg: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
+                                $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
+                                $('#newThread').trigger('hidden.bs.modal');
+                                $('#t-success').show();
+
+                                $('#newThread').on('hidden.bs.modal', function () {
+                                    loadContent(window.location.pathname);
+                                });
+
+                            });
+                        }
+
+                    };
+                }
+            }
+        });
+        
+    }
 
     function loadContent(href){
         update_pm();
@@ -415,6 +530,7 @@ $(function() {
                         break;
                     case 'group':
                         editGroup(input[2]);
+                        newThread();
 
 
 

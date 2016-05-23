@@ -22,6 +22,18 @@ less.render(fs.readFileSync(__dirname + '/../style/style.less', "utf8"),
         fs.writeFileSync(__dirname + '/../public/css/style.css', output.css);
     });
 
+/*
+
+fs.writeFile(__dirname + '/../public/test', "Hey there!", function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("The file was saved!");
+});
+
+*/
+
 /**
  * Get port from environment and store in Express.
  */
