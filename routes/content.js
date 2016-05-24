@@ -58,38 +58,48 @@ router.post('/', function(req, res){
                             user_id: req.session.user.id, g_id: result[0].id, name: result[0].name, info: result[0].info, t: result[0].t
                         };
 
-                        connection.query('SELECT u_id, lvl FROM g_member WHERE g_id = ? ORDER BY lvl DESC', [param.g_id], function (err, result) {
-
-                            if (err){
+                        connection.query('SELECT id FROM g_thread WHERE g_id = ? ORDER BY id DESC', [req.body.id], function (err, result) {
+                            if (err) {
                                 connection.release();
                                 res.sendStatus(500);
                                 return;
                             }
+                            
+                            param.threadList = result;
 
-                            param.memberList = result;
+                            connection.query('SELECT u_id, lvl FROM g_member WHERE g_id = ? ORDER BY lvl DESC', [param.g_id], function (err, result) {
 
-                            var queryNumber = 0;
+                                if (err){
+                                    connection.release();
+                                    res.sendStatus(500);
+                                    return;
+                                }
 
-                            for (var i = 0; i < param.memberList.length; i++) {
-                                if(param.memberList[i].u_id == req.session.user.id)
-                                    param.user_lvl = param.memberList[i].lvl;
+                                param.memberList = result;
 
-                                connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [param.memberList[i].u_id], function (err, output) {
-                                    if (err) {
-                                        connection.release();
-                                        res.sendStatus(500);
-                                        return;
-                                    }
+                                var queryNumber = 0;
 
-                                    param.memberList[queryNumber].name = output[0].f_name + " " + output[0].l_name;
-                                    queryNumber++;
+                                for (var i = 0; i < param.memberList.length; i++) {
+                                    if(param.memberList[i].u_id == req.session.user.id)
+                                        param.user_lvl = param.memberList[i].lvl;
 
-                                    if (param.memberList.length == queryNumber) {
-                                        connection.release();
-                                        res.render('group', param);
-                                    }
-                                });
-                            }
+                                    connection.query('SELECT f_name, l_name FROM user WHERE id = ?', [param.memberList[i].u_id], function (err, output) {
+                                        if (err) {
+                                            connection.release();
+                                            res.sendStatus(500);
+                                            return;
+                                        }
+
+                                        param.memberList[queryNumber].name = output[0].f_name + " " + output[0].l_name;
+                                        queryNumber++;
+
+                                        if (param.memberList.length == queryNumber) {
+                                            connection.release();
+                                            res.render('group', param);
+                                        }
+                                    });
+                                }
+                            });
                         });
                     });
                 });

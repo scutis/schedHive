@@ -18,6 +18,9 @@ var new_grp = require('./routes/new_grp');
 var list_grp = require('./routes/list_grp');
 var edit_grp = require('./routes/edit_grp');
 var new_thrd = require('./routes/new_thrd');
+var get_thrd = require('./routes/get_thrd');
+var edit_pref = require('./routes/edit_pref');
+var add_cmt = require('./routes/add_cmt');
 
 var app = express();
 
@@ -42,6 +45,8 @@ app.use('/metismenu', express.static(__dirname + '/node_modules/metismenu/dist/'
 app.use('/timepicker', express.static(__dirname + '/node_modules/timepicker/'));
 app.use('/datepair', express.static(__dirname + '/node_modules/datepair.js/dist'));
 
+app.use('/upload', express.static(__dirname + '/upload'));
+
 
 //Import session
 var session = require('./session');
@@ -59,6 +64,10 @@ app.use('/new_grp', new_grp);
 app.use('/list_grp', list_grp);
 app.use('/edit_grp', edit_grp);
 app.use('/new_thrd', new_thrd);
+app.use('/get_thrd', get_thrd);
+app.use('/edit_pref', edit_pref);
+app.use('/add_cmt', add_cmt);
+
 
 
 // catch 404 and forward to error handler

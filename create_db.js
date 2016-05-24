@@ -18,8 +18,13 @@ connection.query('CREATE TABLE data (id INT unsigned PRIMARY KEY AUTO_INCREMENT,
 connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_name VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), f_name VARCHAR(100), l_name VARCHAR(100), profile TEXT)');
 
 connection.query('CREATE TABLE g_list (id INT unsigned PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), info VARCHAR(255), t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
-connection.query('CREATE TABLE g_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, r_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 connection.query('CREATE TABLE g_member (g_id INT unsigned, u_id INT unsigned, lvl INT unsigned)');
+connection.query('CREATE TABLE g_thread (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, title VARCHAR(255), data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+
+connection.query('CREATE TABLE t_comment (id INT unsigned PRIMARY KEY AUTO_INCREMENT, t_id INT unsigned, u_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+
+connection.query('CREATE TABLE t_sched (id INT unsigned PRIMARY KEY AUTO_INCREMENT, t_id INT unsigned, t_from TIMESTAMP, t_to TIMESTAMP)');
+connection.query('CREATE TABLE t_pref (t_id INT unsigned, u_id INT unsigned, s_id INT unsigned)');
 
 connection.query('CREATE TABLE notif (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_id INT unsigned, data VARCHAR(255), href VARCHAR(255) , t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 

@@ -11,6 +11,7 @@ var http = require('http');
 
 var less = require('less');
 var fs = require('fs');
+var mkdirp = require('mkdirp');
 
 less.render(fs.readFileSync(__dirname + '/../style/style.less', "utf8"),
     {
@@ -19,20 +20,17 @@ less.render(fs.readFileSync(__dirname + '/../style/style.less', "utf8"),
         compress: true
     },
     function (e, output) {
-        fs.writeFileSync(__dirname + '/../public/css/style.css', output.css);
+        mkdirp(__dirname + '/../public/css', function (err) {
+            if (err){
+                return console.log(err);
+            }
+            fs.writeFile(__dirname + '/../public/css/style.css', output.css, function(err) {
+                if(err) {
+                    return console.log(err);
+                }
+            });
+        });
     });
-
-/*
-
-fs.writeFile(__dirname + '/../public/test', "Hey there!", function(err) {
-    if(err) {
-        return console.log(err);
-    }
-
-    console.log("The file was saved!");
-});
-
-*/
 
 /**
  * Get port from environment and store in Express.

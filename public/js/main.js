@@ -372,7 +372,7 @@ $(function() {
         $("p[data-num='"+optionNumber+"']").datepair();
     }
 
-    function newThread(){
+    function newThread(g_id){
         
         var optionNumber = 0;
         var optionList = [];
@@ -452,7 +452,7 @@ $(function() {
                         fileList.push({name: inputFiles[fileList.length].name, data: event.target.result});
 
                         if (fileList.length == inputFiles.length){
-                            $.post('/new_thrd', {title: $('#t-title').val(), msg: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
+                            $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
                                 $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
                                 $('#newThread').trigger('hidden.bs.modal');
                                 $('#t-success').show();
@@ -466,9 +466,89 @@ $(function() {
 
                     };
                 }
+
+                if (inputFiles.length == 0){
+                    $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
+                        $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
+                        $('#newThread').trigger('hidden.bs.modal');
+                        $('#t-success').show();
+
+                        $('#newThread').on('hidden.bs.modal', function () {
+                            loadContent(window.location.pathname);
+                        });
+
+                    });
+                }
             }
         });
         
+    }
+
+    function getThread(t_id){
+        $.post('/get_thrd', {t_id: t_id}, function (res) {
+            res = JSON.parse(res);
+            
+            $("#tc-author-init").text(res.f_name.charAt(0).toUpperCase() + res.l_name.charAt(0).toUpperCase());
+            $("#tc-author").text(res.f_name + " " + res.l_name);
+            $("#tc-author").attr("href", "/member/"+res.u_id);
+            $("#tc-title").text(res.title);
+            $("#tc-message").text(res.data);
+
+
+            $("#tc-sched").hide();
+            $("#tc-sched").empty();
+            
+            if (res.sched.length != 0){
+
+                $("#tc-sched").append("<label>Schedule Meeting</label><p class='help-block'>Select one or more preferred meeting times</p>");
+
+                for (var i = 0; i < res.sched.length; i++){
+                    $("#tc-sched").append("<div class='checkbox'><label><input type='checkbox'>From <strong>"+res.sched[i].t_from+"</strong> To <strong>"+res.sched[i].t_to+"</strong></label></div>");
+                }
+
+                $("#tc-sched").append("<button id='btn-pref' class='btn btn-default'>Save</button>");
+                $("#tc-sched").show();
+            }
+
+            $("#tc-comment").empty();
+
+            for (var j = 0; j < res.cmt.length; i++){
+                $("#tc-comment").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>"+res.cmt[i].f_name.charAt(0).toUpperCase() + res.cmt[i].l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>"+res.cmt[i].f_name + " " + res.cmt[i].l_name+"</strong><small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i>" + res.cmt[i].t +"</small></div><p class='justify pull-left'>" + res.cmt[i].data +"</p></div></li>");
+            }
+        });
+    }
+
+    function viewThread(){
+        var threadList = JSON.parse($('#t-current').attr("data-thread"));
+        var currentThread = 0;
+
+        getThread(threadList[currentThread].id);
+
+        $('#t-prev').click(function () {
+            if (currentThread != 0){
+                $('#t-next').removeClass("disabled");
+                currentThread--;
+                $("#t-current").text(currentThread + 1);
+                getThread(threadList[currentThread].id);
+
+                if (currentThread == 0){
+                    $(this).addClass("disabled");
+                }
+            }
+        });
+
+        $('#t-next').click(function () {
+            if (currentThread != threadList.length - 1) {
+                $('#t-prev').removeClass("disabled");
+                currentThread++;
+                $("#t-current").text(currentThread + 1);
+                getThread(threadList[currentThread].id);
+
+                if (currentThread == threadList.length - 1) {
+                    $(this).addClass("disabled");
+                }
+            }
+        });
     }
 
     function loadContent(href){
@@ -530,9 +610,10 @@ $(function() {
                         break;
                     case 'group':
                         editGroup(input[2]);
-                        newThread();
+                        newThread(input[2]);
 
-
+                        if (!$('#no-thread-info').length)
+                            viewThread();
 
                         break;
                 }

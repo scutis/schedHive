@@ -108,46 +108,54 @@
 <!-- /.row -->
 <div class="row">
     <div class="col-lg-9">
+        <%if (threadList.length != 0){%>
         <div class="panel panel-default">
             <div class="panel-heading">Threads
                 <ul style="margin-top: -7px;" class="pagination pull-right">
-                    <li class="paginate_button previous disabled">
+                    <li id="t-prev" style="cursor:pointer" class="paginate_button previous disabled">
                         <a><</a>
                     </li>
                     <li class="paginate_button active" >
-                        <a>1/1</a>
+                        <a><span id='t-current' data-thread = "<%= JSON.stringify(threadList) %>">1</span>/<%= threadList.length%></a>
                     </li>
-                    <li class="paginate_button next">
+                    <%if (threadList.length > 1){%>
+                    <li id="t-next" style="cursor:pointer" class="paginate_button next">
+                        <%}else{%>
+                    <li id="t-next" style="cursor:pointer" class="paginate_button next disabled">
+                        <%}%>
                         <a>></a>
                     </li>
                 </ul>
             </div>
-            <!-- /.panel-heading -->
+
             <div class="panel-body">
-                <h4>Thread Title</h4>
-                <p>Thread Content</p>
-            </div>
+                <span class='pm-img pull-left' style="width: 100px;">
+                    <div class="img-circle profile-img"><p id="tc-author-init"></p></div><a id="tc-author" href=""></a>
+                </span>
+                <h3 id="tc-title"></h3>
+                <p class="justify" id="tc-message"></p>
+                <br/>
 
-            <div class="panel-footer">
-
-                <ul id="pm-list" class="pm">
-                    <li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>PC</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>Pietro Colombari</strong> <small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i> timestamp</small></div><p class='justify pull-left'>This is another message</p></div></li>
-                    <li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>PC</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>Pietro Colombari</strong> <small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i> timestamp</small></div><p class='justify pull-left'>This is another message</p></div></li>
-                </ul>
-
-                <div class="input-group">
-                    <textarea id="message" class="form-control" rows="4" style="resize: vertical;" placeholder="Message" disabled="disabled"></textarea>
-                    <span class="input-group-btn">
-                        <button class="btn btn-primary btn-sm" id="send">Send</button>
-                    </span>
+                <div id="tc-sched" style="display:none;" class="form-group well well-sm">
                 </div>
             </div>
-            <!-- /.panel-body -->
-        </div>
-            <!-- /.panel-body -->
-        <!-- /.panel -->
-    </div>
-    <!-- /.col-lg-6 -->
+            <div class="panel-footer">
+
+                <ul id="tc-comment" class="pm"></ul>
+
+               <div class="input-group">
+                   <textarea id="input-comment" class="form-control" rows="4" style="resize: vertical;" placeholder="Message" disabled="disabled"></textarea>
+                   <span class="input-group-btn">
+                       <button id="btn-comment" class="btn btn-primary btn-sm" id="send">Send</button>
+                   </span>
+               </div>
+           </div>
+       </div>
+        <%} else {%>
+        <div id="no-thread-info" class="alert alert-info">This group has no active threads</div>
+        <%}%>
+   </div>
+   <!-- /.col-lg-6 -->
     <div class="col-lg-3">
         <div class="panel panel-default">
             <div class="panel-heading">

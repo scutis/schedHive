@@ -23,12 +23,13 @@
     "jquery": "^2.2.4",
     "less": "^2.7.0",
     "metismenu": "^2.5.2",
+    "mkdirp": "*",
     "morgan": "^1.7.0",
     "mysql": "^2.10.2",
     "random-gen": "^0.1.0",
     "respond.js": "^1.4.2",
     "serve-favicon": "^2.3.0",
     "socket.io": "^1.4.6",
-    "timepicker": "^1.10.1"
+    "timepicker": "^1.11.1"
   }
 }
