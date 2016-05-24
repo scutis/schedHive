@@ -22,9 +22,12 @@ connection.query('CREATE TABLE g_member (g_id INT unsigned, u_id INT unsigned, l
 connection.query('CREATE TABLE g_thread (id INT unsigned PRIMARY KEY AUTO_INCREMENT, g_id INT unsigned, u_id INT unsigned, title VARCHAR(255), data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
 connection.query('CREATE TABLE t_comment (id INT unsigned PRIMARY KEY AUTO_INCREMENT, t_id INT unsigned, u_id INT unsigned, data TEXT, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+connection.query('CREATE TABLE t_file (id INT unsigned PRIMARY KEY AUTO_INCREMENT, t_id INT unsigned, name VARCHAR(255))');
 
 connection.query('CREATE TABLE t_sched (id INT unsigned PRIMARY KEY AUTO_INCREMENT, t_id INT unsigned, t_from TIMESTAMP, t_to TIMESTAMP)');
 connection.query('CREATE TABLE t_pref (t_id INT unsigned, u_id INT unsigned, s_id INT unsigned)');
+
+
 
 connection.query('CREATE TABLE notif (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_id INT unsigned, data VARCHAR(255), href VARCHAR(255) , t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 

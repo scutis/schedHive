@@ -6,20 +6,12 @@ var aes = require('../aes');
 router.post('/', function(req, res){
     if (req.session.user) {
 
-        var response = {
-            title: null,
-            data: null,
-            t: null,
-            u_id: null,
-            f_name: null,
-            l_name: null,
-            sched: [],
-            cmt: []
-        };
+        var response = {};
 
         var endThread = false;
         var endSched = false;
         var endComment = false;
+        var endFile = false;
 
         mysql.connect(res, function(connection){
             connection.query('SELECT u_id, title, data, t FROM g_thread WHERE id = ?', [req.body.t_id], function (err, result) {
@@ -49,11 +41,30 @@ router.post('/', function(req, res){
 
                     endThread = true;
 
-                    if (endThread && endSched && endComment){
+                    if (endThread && endSched && endComment && endFile){
                         connection.release();
                         res.send(JSON.stringify(response));
                     }
                 });
+            });
+
+            connection.query('SELECT name FROM t_file WHERE t_id = ?', [req.body.t_id], function (err, result) {
+
+                if (err) {
+                    connection.release();
+                    res.sendStatus(500);
+                    return;
+                }
+
+                response.file = result;
+
+                endFile = true;
+
+                if (endThread && endSched && endComment && endFile){
+                    connection.release();
+                    res.send(JSON.stringify(response));
+                }
+
             });
 
 
@@ -65,20 +76,52 @@ router.post('/', function(req, res){
                     return;
                 }
 
+                var queryNumber = 0;
+
+                if (result.length == 0){
+                    response.sched = result;
+                    endSched = true;
+
+                    if (endThread && endSched && endComment && endFile){
+                        connection.release();
+                        res.send(JSON.stringify(response));
+                    }
+                }
+
                 for (var i = 0; i < result.length; i++){
                     result[i].t_from = ('0' + result[i].t_from.getDate()).slice(-2) + '/' + ('0' + (result[i].t_from.getMonth()+1)).slice(-2) + '/' + result[i].t_from.getFullYear() + ' ' +
                         ('0' + (result[i].t_from.getHours())).slice(-2) + ':' + ('0' + (result[i].t_from.getMinutes())).slice(-2);
 
                     result[i].t_to = ('0' + result[i].t_to.getDate()).slice(-2) + '/' + ('0' + (result[i].t_to.getMonth()+1)).slice(-2) + '/' + result[i].t_to.getFullYear() + ' ' +
                         ('0' + (result[i].t_to.getHours())).slice(-2) + ':' + ('0' + (result[i].t_to.getMinutes())).slice(-2);
-                }
 
-                response.sched = result;
-                endSched = true;
+                    connection.query('SELECT u_id FROM t_pref WHERE s_id = ?', [result[i].id], function (err, output) {
+                        if (err) {
+                            connection.release();
+                            res.sendStatus(500);
+                            return;
+                        }
+                        result[queryNumber].size = output.length;
+                        result[queryNumber].checked = false;
 
-                if (endThread && endSched && endComment){
-                    connection.release();
-                    res.send(JSON.stringify(response));
+                        for (var i = 0; i < output.length; i++){
+                            if (output[i].u_id == req.session.user.id){
+                                result[queryNumber].checked = true;
+                            }
+                        }
+
+                        queryNumber++;
+
+                        if (queryNumber == result.length){
+                            response.sched = result;
+                            endSched = true;
+
+                            if (endThread && endSched && endComment && endFile){
+                                connection.release();
+                                res.send(JSON.stringify(response));
+                            }
+                        }
+                    });
                 }
             });
 
@@ -93,9 +136,10 @@ router.post('/', function(req, res){
                 var queryNumber = 0;
                 
                 if (result.length == 0){
+                    response.cmt = result;
                     endComment = true;
 
-                    if (endThread && endSched && endComment){
+                    if (endThread && endSched && endComment && endFile){
                         connection.release();
                         res.send(JSON.stringify(response));
                     }
@@ -116,11 +160,11 @@ router.post('/', function(req, res){
 
                         queryNumber++;
 
-                        if (result.length == queryNumber){
+                        if (queryNumber == result.length){
                             response.cmt = result;
                             endComment = true;
 
-                            if (endThread && endSched && endComment){
+                            if (endThread && endSched && endComment && endFile){
                                 connection.release();
                                 res.send(JSON.stringify(response));
                             }

@@ -130,21 +130,27 @@
 
             <div class="panel-body">
                 <span class='pm-img pull-left' style="width: 100px;">
-                    <div class="img-circle profile-img"><p id="tc-author-init"></p></div><a id="tc-author" href=""></a>
+                    <div class="img-circle profile-img"><p id="tc-author-init"></p></div><a id="tc-author" href=""></a><p class="help-block" id="tc-timestamp"></p>
                 </span>
                 <h3 id="tc-title"></h3>
                 <p class="justify" id="tc-message"></p>
-                <br/>
-
-                <div id="tc-sched" style="display:none;" class="form-group well well-sm">
-                </div>
+            </div>
+            <div style="display:none;" class="form-group well well-sm">
+                <label>Uploaded Documents</label>
+                <ul id="tc-file" class="list-inline"></ul>
+            </div>
+            <div id="tc-sched" style="display:none;" class="form-group well well-sm">
+                <label>Schedule Meeting</label>
+                <p class='help-block'>Select one or more preferred meeting times</p>
+                <button id="btn-pref" class="btn btn-default">Save</button>
+                <div id="s-success" class='alert alert-success' style="display: none; margin-bottom: 0"></div>
             </div>
             <div class="panel-footer">
 
                 <ul id="tc-comment" class="pm"></ul>
 
                <div class="input-group">
-                   <textarea id="input-comment" class="form-control" rows="4" style="resize: vertical;" placeholder="Message" disabled="disabled"></textarea>
+                   <textarea id="input-comment" class="form-control" rows="4" style="resize: vertical;" placeholder="Message"></textarea>
                    <span class="input-group-btn">
                        <button id="btn-comment" class="btn btn-primary btn-sm" id="send">Send</button>
                    </span>

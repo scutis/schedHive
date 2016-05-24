@@ -447,24 +447,26 @@ $(function() {
 
                 for (var j = 0; j < inputFiles.length; j++){
                     var reader = new FileReader();
-                    reader.readAsText(inputFiles[j], 'UTF-8');
-                    reader.onload = function (event) {
-                        fileList.push({name: inputFiles[fileList.length].name, data: event.target.result});
+                    var file = inputFiles[j];
+                    reader.readAsDataURL(file);
+                    reader.onload = (function(file){
+                        return function (event) {
+                            fileList.push({name: file.name, data: event.target.result});
 
-                        if (fileList.length == inputFiles.length){
-                            $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
-                                $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
-                                $('#newThread').trigger('hidden.bs.modal');
-                                $('#t-success').show();
+                            if (fileList.length == inputFiles.length){
+                                $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
+                                    $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
+                                    $('#newThread').trigger('hidden.bs.modal');
+                                    $('#t-success').show();
 
-                                $('#newThread').on('hidden.bs.modal', function () {
-                                    loadContent(window.location.pathname);
+                                    $('#newThread').on('hidden.bs.modal', function () {
+                                        loadContent(window.location.pathname);
+                                    });
+
                                 });
-
-                            });
-                        }
-
-                    };
+                            }
+                        };
+                    })(file);
                 }
 
                 if (inputFiles.length == 0){
@@ -485,6 +487,9 @@ $(function() {
     }
 
     function getThread(t_id){
+
+        $("#s-success").hide();
+
         $.post('/get_thrd', {t_id: t_id}, function (res) {
             res = JSON.parse(res);
             
@@ -493,29 +498,67 @@ $(function() {
             $("#tc-author").attr("href", "/member/"+res.u_id);
             $("#tc-title").text(res.title);
             $("#tc-message").text(res.data);
+            $("#tc-timestamp").text(res.t);
 
 
             $("#tc-sched").hide();
-            $("#tc-sched").empty();
+            $("#tc-file").closest("div").hide();
+            $("#tc-file").empty();
+            $(".checkbox").remove();
+
+            if (res.file.length != 0) {
+                for (var i = 0; i < res.file.length; i++){
+                    $("#tc-file").append("<li><a href='/upload/t"+ t_id+ "/" + res.file[i].name+"' target='_blank' >"+res.file[i].name+"</a></li>");
+                }
+                $("#tc-file").closest("div").show();
+            }
+
             
             if (res.sched.length != 0){
 
-                $("#tc-sched").append("<label>Schedule Meeting</label><p class='help-block'>Select one or more preferred meeting times</p>");
+                for (i = 0; i < res.sched.length; i++){
+                    $("<div class='checkbox' data-tid='"+t_id+"' ><label><input data-id='"+res.sched[i].id+"' type='checkbox'><strong>"+res.sched[i].t_from+"</strong> to <strong>"+res.sched[i].t_to+"</strong> ("+res.sched[i].size+")</label></div>").insertBefore("#btn-pref");
 
-                for (var i = 0; i < res.sched.length; i++){
-                    $("#tc-sched").append("<div class='checkbox'><label><input type='checkbox'>From <strong>"+res.sched[i].t_from+"</strong> To <strong>"+res.sched[i].t_to+"</strong></label></div>");
+                    if (res.sched[i].checked)
+                        $(".checkbox input").last().attr('checked', true);
                 }
-
-                $("#tc-sched").append("<button id='btn-pref' class='btn btn-default'>Save</button>");
                 $("#tc-sched").show();
+
+                $('#btn-pref').unbind("click");
+                $('#btn-pref').click(function () {
+                    var schedList = $(".checkbox input");
+                    var prefList = [];
+
+                    for (var i = 0; i < schedList.length; i++) {
+                        if (schedList[i].checked) {
+                            prefList.push(parseInt(schedList[i].attributes['data-id'].nodeValue));
+                        }
+                    }
+
+                    $.post('/edit_pref', {t_id: parseInt($(".checkbox").attr('data-tid')), prefList: JSON.stringify(prefList)}, function (res) {
+                        getThread(parseInt($(".checkbox").attr('data-tid')));
+                        $("#s-success").text("Preferences successfully updated!")
+                        $("#s-success").show();
+                    });
+                });
+
             }
 
             $("#tc-comment").empty();
 
-            for (var j = 0; j < res.cmt.length; i++){
-                $("#tc-comment").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>"+res.cmt[i].f_name.charAt(0).toUpperCase() + res.cmt[i].l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>"+res.cmt[i].f_name + " " + res.cmt[i].l_name+"</strong><small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i>" + res.cmt[i].t +"</small></div><p class='justify pull-left'>" + res.cmt[i].data +"</p></div></li>");
+            for (var j = 0; j < res.cmt.length; j++){
+                $("#tc-comment").append("<li class='left clearfix'><span class='pm-img pull-left'> <div class='img-circle avatar-left'><p>"+res.cmt[j].f_name.charAt(0).toUpperCase() + res.cmt[j].l_name.charAt(0).toUpperCase()+"</p></div></span> <div class='pm-body clearfix'> <div class='header'> <strong class='primary-font'>"+res.cmt[j].f_name + " " + res.cmt[j].l_name+"</strong><small class='text-muted'> <i class='fa fa-clock-o fa-fw'></i>" + res.cmt[j].t +"</small></div><p class='justify pull-left'>" + res.cmt[j].data +"</p></div></li>");
             }
         });
+    }
+
+    function addComment(t_id){
+        if($('#input-comment').val().trim() != ""){
+            $.post('/add_cmt', {t_id: t_id, data: $('#input-comment').val()}, function (res) {
+                getThread(t_id);
+            });
+            $('#input-comment').val("");
+        }
     }
 
     function viewThread(){
@@ -549,79 +592,90 @@ $(function() {
                 }
             }
         });
+
+        $('#btn-comment').click(function () {
+            addComment(threadList[currentThread].id);
+        });
     }
 
     function loadContent(href){
+
+        if (href == '/logout'){
+            window.location.replace('/logout');
+            return;
+        }
+
         update_pm();
         updateGroup();
-        var input = href.split("/");
-        if (input[1] == 'logout') {
-            window.location.href = '/logout';
-        } else {
-            $.post('/content', {page: input[1], id: input[2]}, function (res) {
-                $('#page-wrapper').html(res);
 
-                var input = href.split("/");
-                switch (input[1]) {
-                    case 'member':
+        var addHistory = true;
+
+        var input = href.split("/");
+        $.post('/content', {page: input[1], id: input[2]}, function (res) {
+            $('#page-wrapper').html(res);
+
+            var input = href.split("/");
+            switch (input[1]) {
+                case 'member':
+                    get_pm(input[2]);
+
+                    $('#refresh').click(function () {
                         get_pm(input[2]);
+                    });
+
+                    $('#send').click(function () {
+                        add_pm(input[2]);
+                    });
+
+                    break;
+                case 'pm':
+
+                    if (input.length == 4){
+                        list_pm(input[2]);
+                        get_pm(input[3]);
+
+                        $("#send").unbind("click");
+                        $("#refresh").unbind("click");
 
                         $('#refresh').click(function () {
-                            get_pm(input[2]);
+                            get_pm(input[3]);
                         });
 
                         $('#send').click(function () {
-                            add_pm(input[2]);
+                            add_pm(input[3]);
                         });
-
-                        break;
-                    case 'pm':
-
-                        if (input.length == 4){
-                            list_pm(input[2]);
-                            get_pm(input[3]);
-
-                            $("#send").unbind("click");
-                            $("#refresh").unbind("click");
-
-                            $('#refresh').click(function () {
-                                get_pm(input[3]);
-                            });
-
-                            $('#send').click(function () {
-                                add_pm(input[3]);
-                            });
-                            href = input[0] + input[1] + input[2];
-                        }
-                        else if (input.length == 3)
-                            list_pm(input[2]);
-                        else
-                            list_pm("all");
+                        addHistory = false;
+                    }
+                    else if (input.length == 3)
+                        list_pm(input[2]);
+                    else
+                        list_pm("all");
 
 
-                        $('#all-pm').click(function () {
-                            list_pm("all");
-                        });
+                    $('#all-pm').click(function () {
+                        list_pm("all");
+                    });
 
-                        $('#unread_pm').click(function () {
-                            list_pm("unread");
-                        });
+                    $('#unread_pm').click(function () {
+                        list_pm("unread");
+                    });
 
-                        break;
-                    case 'group':
-                        editGroup(input[2]);
-                        newThread(input[2]);
+                    break;
+                case 'group':
+                    editGroup(input[2]);
+                    newThread(input[2]);
 
-                        if (!$('#no-thread-info').length)
-                            viewThread();
+                    if (!$('#no-thread-info').length)
+                        viewThread();
 
-                        break;
+                    break;
                 }
+
+            if (href != window.location.pathname && addHistory) {
+                window.history.pushState('', 'page: '+href, href);
+            }
+
             });
-        }
-        if (href != window.location.pathname && input.length < 4) {
-            window.history.pushState('', 'page: '+href, href);
-        }
     }
 
     function login() {
@@ -633,7 +687,7 @@ $(function() {
                 $('#login-error').text("Invalid Credentials");
             }
             else if (res == "true")
-                window.location.href = '/';
+                window.location.replace ('/');
             else
                 $('#login-error').html("Error");
         });
@@ -649,9 +703,9 @@ $(function() {
         $('div.navbar-collapse').addClass('collapse'); //Collapse side-bar
 
         $('a[href]').click(function(e) {
-
             var href = $(this).attr("href");
             loadContent(href);
+
             e.preventDefault();
         });
 
