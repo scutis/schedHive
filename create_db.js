@@ -16,7 +16,6 @@ connection.query('DROP DATABASE IF EXISTS schedHive');
 connection.query('CREATE DATABASE schedHive');
 connection.query('USE schedHive');
 connection.query('CREATE TABLE data (id INT unsigned PRIMARY KEY AUTO_INCREMENT, user INT unsigned, input TEXT)');
-//connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_name VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), f_name VARCHAR(100), l_name VARCHAR(100), profile TEXT)');
 
 connection.query('CREATE TABLE user (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_name VARCHAR(20), hash VARCHAR(255), salt VARCHAR(10), n_name VARCHAR(100), f_name VARCHAR(100), l_name VARCHAR(100), email VARCHAR(100), profile TEXT)');
 

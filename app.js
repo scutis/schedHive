@@ -22,6 +22,7 @@ var get_thrd = require('./routes/get_thrd');
 var edit_pref = require('./routes/edit_pref');
 var add_cmt = require('./routes/add_cmt');
 var list_notif = require('./routes/list_notif');
+var edit_pro = require('./routes/edit_pro');
 
 var app = express();
 
@@ -77,6 +78,7 @@ app.use('/get_thrd', get_thrd);
 app.use('/edit_pref', edit_pref);
 app.use('/add_cmt', add_cmt);
 app.use('/list_notif', list_notif);
+app.use('/edit_pro', edit_pro);
 
 
 // catch 404 and forward to error handler

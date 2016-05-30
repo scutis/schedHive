@@ -120,11 +120,21 @@ router.post('/', function(req, res){
 
                 break;
             case 'profile':
-                var param = {
-                    f_name: req.session.user.f_name,
-                    l_name: req.session.user.l_name
-                };
-                res.render('home', param);
+
+                mysql.connect(res, function(connection){
+                    connection.query('SELECT u_name, n_name, f_name, l_name, email, profile FROM user WHERE id = ?', [req.session.user.id], function (err, result) {
+                        connection.release();
+                        if (err){
+                            res.sendStatus(500);
+                            return;
+                        }
+
+                        var param = result[0];
+
+                        res.render('profile', param);
+                    });
+                });
+                
                 break;
             default:
                 res.sendStatus(404);

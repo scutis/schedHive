@@ -402,6 +402,38 @@ $(function() {
 
         });
     }
+    
+    function updateProfile(){
+
+        $('#edit-pro').click(function () {
+
+            $('#p-error').hide();
+            $('#p-success').hide();
+
+            if ($('#p-n_name').val().trim() == "" || $('#p-email').val().trim() == "" || $('#p-profile').val().trim() == "") {
+                $('#p-error').text("Invalid nickname, email, password or description");
+                $('#p-error').show();
+            } else {
+
+                $.post('/edit_pro', {
+                    n_name: $('#p-n_name').val(),
+                    email: $('#p-email').val(),
+                    password: $('#p-password').val(),
+                    profile: $('#p-profile').val()
+                }, function (res) {
+                    $('#p-success').text("Profile successfully updated!");
+                    $('#p-success').show();
+
+                });
+            }
+        });
+
+        $('#reset-pro').click(function () {
+            loadContent("/profile");
+        });
+        
+        
+    }
 
     function newThread(g_id){
         
@@ -713,6 +745,9 @@ $(function() {
                     if (!$('#no-thread-info').length)
                         viewThread(parseInt(input[3]));
 
+                    break;
+                case 'profile':
+                    updateProfile();
                     break;
                 }
 
