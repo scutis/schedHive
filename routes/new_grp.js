@@ -34,14 +34,31 @@ router.post('/', function(req, res) {
                 }
 
                 connection.query('INSERT INTO g_member (g_id, u_id, lvl) VALUES ?', [entryMember], function (err) {
-                    connection.release();
                     if (err) {
                         res.sendStatus(500);
                         return;
                     }
 
-                    res.sendStatus(200);
+                    var entryNotif = [];
+
+                    for (var i = 0; i < memberList.length; i++){
+
+                        var notif = [memberList[i], result.insertId, 0, "Added to group "+req.body.name];
+
+                        entryNotif.push(notif);
+                    }
+
+                    connection.query('INSERT INTO notif (u_id, g_id, t_id, data) VALUES ?', [entryNotif], function (err) {
+                        connection.release();
+                        if (err) {
+                            res.sendStatus(500);
+                            return;
+                        }
+
+                        res.sendStatus(200);
+                    });
                 });
+
             });
         });
 

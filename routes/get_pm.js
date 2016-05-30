@@ -43,13 +43,17 @@ router.post('/', function(req, res){
                         connection.query('UPDATE p_table SET u_read = 1 WHERE u_from = ? AND u_to = ? AND u_read = 0', [req.body.m_id, req.session.user.id], function (err) {
                             connection.release();
                             if (err){
-                                console.log(err);
+                                res.sendStatus(500);
+                                return;
                             }
-                        });
-                    } else
-                        connection.release();
 
-                    res.send(JSON.stringify(data));
+                            res.send(JSON.stringify(data));
+                        });
+                    } else{
+                        connection.release();
+                        res.send(JSON.stringify(data));
+                    }
+
 
                 });
             });

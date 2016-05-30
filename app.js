@@ -21,6 +21,7 @@ var new_thrd = require('./routes/new_thrd');
 var get_thrd = require('./routes/get_thrd');
 var edit_pref = require('./routes/edit_pref');
 var add_cmt = require('./routes/add_cmt');
+var list_notif = require('./routes/list_notif');
 
 var app = express();
 
@@ -35,6 +36,19 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 app.use(cookieParser());
 
+//Import session
+var session = require('./session');
+app.use(session);
+
+//Protect upload folder
+app.get('/upload/*', function(req, res, next) {
+    if (req.session.user)
+        next();
+    else
+        res.sendStatus(403);
+});
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'));
@@ -46,12 +60,6 @@ app.use('/metismenu', express.static(__dirname + '/node_modules/metismenu/dist/'
 app.use('/timepicker', express.static(__dirname + '/node_modules/timepicker/'));
 app.use('/datepair', express.static(__dirname + '/node_modules/datepair.js/dist'));
 
-app.use('/upload', express.static(__dirname + '/upload'));
-
-
-//Import session
-var session = require('./session');
-app.use(session);
 
 app.use('/', index);
 app.use('/login', login);
@@ -68,7 +76,7 @@ app.use('/new_thrd', new_thrd);
 app.use('/get_thrd', get_thrd);
 app.use('/edit_pref', edit_pref);
 app.use('/add_cmt', add_cmt);
-
+app.use('/list_notif', list_notif);
 
 
 // catch 404 and forward to error handler

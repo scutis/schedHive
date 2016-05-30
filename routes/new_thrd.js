@@ -29,10 +29,46 @@ router.post('/', function(req, res) {
 
                 var insertNumber = 0;
                 var endQuery = true;
+                var endNotif = false;
+
+                connection.query('SELECT u_id FROM g_member WHERE g_id = ?', [req.body.g_id], function (err, output) {
+
+                    if (err) {
+                        connection.release();
+                        res.sendStatus(500);
+                        return;
+                    }
+
+                    var entryNotif = [];
+
+                    for (var i = 0; i < output.length; i++){
+                        if (output[i].u_id != req.session.user.id){
+                            var notif = [output[i].u_id, req.body.g_id, result.insertId, "New thread "+req.body.title];
+                            entryNotif.push(notif);
+                        }
+                    }
+
+                    connection.query('INSERT INTO notif (u_id, g_id, t_id, data) VALUES ?', [entryNotif], function (err) {
+                        if (err) {
+                            connection.release();
+                            res.sendStatus(500);
+                            return;
+                        }
+
+                        endNotif = true;
+
+                        if ((req.body.s_list.length == 0 && req.body.f_list.length == 0) || (insertNumber == req.body.f_list.length && endQuery)){
+                            connection.release();
+                            res.sendStatus(200);
+                        }
+                    });
+
+                });
+
 
                 if (req.body.f_list.length != 0){
 
-                    mkdirp(__dirname + '/../upload/t' + result.insertId, function (err) {
+                    mkdirp(__dirname + '/../public/upload/t' + result.insertId, function (err) {
                         if (err){
                             connection.release();
                             res.sendStatus(500);
@@ -46,7 +82,7 @@ router.post('/', function(req, res) {
                             var dataIndex = req.body.f_list[i].data.indexOf('base64') + 7;
                             var baseData = req.body.f_list[i].data.slice(dataIndex, req.body.f_list[i].data.length);
 
-                            fs.writeFile(__dirname + '/../upload/t'+ + result.insertId +'/' + req.body.f_list[i].name, new Buffer(baseData, 'base64'), function (err) {
+                            fs.writeFile(__dirname + '/../public/upload/t'+ + result.insertId +'/' + req.body.f_list[i].name, new Buffer(baseData, 'base64'), function (err) {
                                 if (err) {
                                     connection.release();
                                     res.sendStatus(500);
@@ -62,7 +98,7 @@ router.post('/', function(req, res) {
 
                                     insertNumber++;
 
-                                    if (insertNumber == req.body.f_list.length && endQuery){
+                                    if (insertNumber == req.body.f_list.length && endQuery && endNotif){
                                         connection.release();
                                         res.sendStatus(200);
                                     }
@@ -93,16 +129,11 @@ router.post('/', function(req, res) {
 
                         endQuery = true;
 
-                        if (insertNumber == req.body.f_list.length && endQuery){
+                        if (insertNumber == req.body.f_list.length && endQuery && endNotif){
                             connection.release();
                             res.sendStatus(200);
                         }
                     });
-                }
-
-                if (req.body.s_list.length == 0 && req.body.f_list.length == 0){
-                    connection.release();
-                    res.sendStatus(200);
                 }
             });
         });

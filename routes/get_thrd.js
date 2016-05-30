@@ -12,8 +12,26 @@ router.post('/', function(req, res){
         var endSched = false;
         var endComment = false;
         var endFile = false;
+        var endNotif = false;
 
         mysql.connect(res, function(connection){
+
+            connection.query('DELETE FROM notif WHERE u_id = ? AND t_id = ?', [req.session.user.id, req.body.t_id], function (err, result) {
+                if (err) {
+                    connection.release();
+                    res.sendStatus(500);
+                    return;
+                }
+                
+                endNotif = true;
+
+                if (endThread && endSched && endComment && endFile && endNotif){
+                    connection.release();
+                    res.send(JSON.stringify(response));
+                }
+            });
+
+
             connection.query('SELECT u_id, title, data, t FROM g_thread WHERE id = ?', [req.body.t_id], function (err, result) {
 
                 if (err) {
@@ -41,7 +59,7 @@ router.post('/', function(req, res){
 
                     endThread = true;
 
-                    if (endThread && endSched && endComment && endFile){
+                    if (endThread && endSched && endComment && endFile && endNotif){
                         connection.release();
                         res.send(JSON.stringify(response));
                     }
@@ -60,7 +78,7 @@ router.post('/', function(req, res){
 
                 endFile = true;
 
-                if (endThread && endSched && endComment && endFile){
+                if (endThread && endSched && endComment && endFile && endNotif){
                     connection.release();
                     res.send(JSON.stringify(response));
                 }
@@ -82,7 +100,7 @@ router.post('/', function(req, res){
                     response.sched = result;
                     endSched = true;
 
-                    if (endThread && endSched && endComment && endFile){
+                    if (endThread && endSched && endComment && endFile && endNotif){
                         connection.release();
                         res.send(JSON.stringify(response));
                     }
@@ -116,7 +134,7 @@ router.post('/', function(req, res){
                             response.sched = result;
                             endSched = true;
 
-                            if (endThread && endSched && endComment && endFile){
+                            if (endThread && endSched && endComment && endFile && endNotif){
                                 connection.release();
                                 res.send(JSON.stringify(response));
                             }
@@ -139,7 +157,7 @@ router.post('/', function(req, res){
                     response.cmt = result;
                     endComment = true;
 
-                    if (endThread && endSched && endComment && endFile){
+                    if (endThread && endSched && endComment && endFile && endNotif){
                         connection.release();
                         res.send(JSON.stringify(response));
                     }
@@ -164,7 +182,7 @@ router.post('/', function(req, res){
                             response.cmt = result;
                             endComment = true;
 
-                            if (endThread && endSched && endComment && endFile){
+                            if (endThread && endSched && endComment && endFile && endNotif){
                                 connection.release();
                                 res.send(JSON.stringify(response));
                             }

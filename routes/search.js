@@ -7,7 +7,7 @@ router.post('/', function(req, res) {
         var pattern = '%' + mysql.escape(req.body.search) + '%';
 
         mysql.connect(res, function(connection){
-            connection.query('SELECT id, f_name, l_name FROM user WHERE id != ? && CONCAT(f_name, " ", l_name) LIKE ?', [req.session.user.id, pattern], function (err, result) {
+            connection.query('SELECT id, f_name, l_name FROM user WHERE id != ? && (CONCAT(f_name, " ", l_name) LIKE ? || email LIKE ? || n_name LIKE ? || id LIKE ?)', [req.session.user.id, pattern, pattern, pattern, pattern], function (err, result) {
                 connection.release();
 
                 if (err){

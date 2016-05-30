@@ -13,7 +13,7 @@
     <ul class="nav navbar-top-links navbar-right">
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">
-                <span class="notif-count"></span>
+                <span class="pm-count"></span>
                 <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
             </a>
             <ul id="pm-nav" class="dropdown-menu dropdown-messages">
@@ -23,61 +23,10 @@
 
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">
+                <span class="notif-count"></span>
                 <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
             </a>
-            <ul class="dropdown-menu dropdown-alerts">
-                <li>
-                    <a href="#">
-                        <div>
-                            <i class="fa fa-comment fa-fw"></i> New Comment
-                            <span class="pull-right text-muted small">4 minutes ago</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a href="#">
-                        <div>
-                            <i class="fa fa-twitter fa-fw"></i> 3 New Followers
-                            <span class="pull-right text-muted small">12 minutes ago</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a href="#">
-                        <div>
-                            <i class="fa fa-envelope fa-fw"></i> Message Sent
-                            <span class="pull-right text-muted small">4 minutes ago</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a href="#">
-                        <div>
-                            <i class="fa fa-tasks fa-fw"></i> New Task
-                            <span class="pull-right text-muted small">4 minutes ago</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a href="#">
-                        <div>
-                            <i class="fa fa-upload fa-fw"></i> Server Rebooted
-                            <span class="pull-right text-muted small">4 minutes ago</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a class="text-center" href="#">
-                        <strong>See All Alerts</strong>
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-                </li>
-            </ul>
+            <ul id="notif-nav" class="dropdown-menu dropdown-alerts"></ul>
         </li>
 
         <li class="dropdown">
@@ -85,11 +34,11 @@
                 <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><a href="#"><i class="fa fa-user fa-fw"></i> <%= u_name %></a>
-                </li>
-                <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                <li class='text-center'><em style='cursor:default;'><i class="fa fa-user fa-fw"></i> <%= u_name %></em>
                 </li>
                 <li class="divider"></li>
+                <li><a href="/profile"><i class="fa fa-gear fa-fw"></i> Profile</a>
+                </li>
                 <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                 </li>
             </ul>
@@ -118,7 +67,7 @@
                     <a id="home" href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
                 </li>
                 <li>
-                    <a><i class="fa fa-bar-chart-o fa-fw"></i> Groups<span class="fa arrow"></span></a>
+                    <a><i class="fa fa-group fa-fw"></i> Groups<span class="fa arrow"></span></a>
                     <ul id="group-nav" class="nav nav-second-level">
                         <li>
                             <a style="font-style: italic;cursor:pointer;"data-toggle="modal" data-target="#newGroup">

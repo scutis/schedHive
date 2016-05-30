@@ -118,11 +118,7 @@
                     <li class="paginate_button active" >
                         <a><span id='t-current' data-thread = "<%= JSON.stringify(threadList) %>">1</span>/<%= threadList.length%></a>
                     </li>
-                    <%if (threadList.length > 1){%>
-                    <li id="t-next" style="cursor:pointer" class="paginate_button next">
-                        <%}else{%>
                     <li id="t-next" style="cursor:pointer" class="paginate_button next disabled">
-                        <%}%>
                         <a>></a>
                     </li>
                 </ul>

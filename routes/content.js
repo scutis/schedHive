@@ -47,6 +47,7 @@ router.post('/', function(req, res){
             case 'group':
 
                 mysql.connect(res, function(connection){
+
                     connection.query('SELECT * FROM g_list WHERE id = ?', [req.body.id], function (err, result) {
                         if (err){
                             connection.release();
@@ -64,8 +65,12 @@ router.post('/', function(req, res){
                                 res.sendStatus(500);
                                 return;
                             }
+
+                            param.threadList = [];
                             
-                            param.threadList = result;
+                            for (var i = 0; i < result.length; i++){
+                                param.threadList.push(result[i].id);
+                            }
 
                             connection.query('SELECT u_id, lvl FROM g_member WHERE g_id = ? ORDER BY lvl DESC', [param.g_id], function (err, result) {
 
@@ -94,8 +99,17 @@ router.post('/', function(req, res){
                                         queryNumber++;
 
                                         if (param.memberList.length == queryNumber) {
-                                            connection.release();
-                                            res.render('group', param);
+                                            connection.query('DELETE FROM notif WHERE u_id = ? AND g_id = ? AND t_id = 0', [req.session.user.id, req.body.id], function (err, result) {
+                                                if (err) {
+                                                    connection.release();
+                                                    res.sendStatus(500);
+                                                    return;
+                                                }
+
+                                                connection.release();
+                                                res.render('group', param);
+                                                
+                                            });
                                         }
                                     });
                                 }
@@ -104,6 +118,13 @@ router.post('/', function(req, res){
                     });
                 });
 
+                break;
+            case 'profile':
+                var param = {
+                    f_name: req.session.user.f_name,
+                    l_name: req.session.user.l_name
+                };
+                res.render('home', param);
                 break;
             default:
                 res.sendStatus(404);

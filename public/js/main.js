@@ -275,7 +275,7 @@ $(function() {
     }
 
     function update_pm(){
-        $(".notif-count").hide();
+        $(".pm-count").hide();
         $.post('/list_pm', {sel: "unread"}, function (res) {
             $("#pm-nav").empty();
             var data = JSON.parse(res);
@@ -285,11 +285,11 @@ $(function() {
 
             if (data.length == 0){
                 $("#pm-nav").append("<li class='text-center'><em style='cursor:default;'>No new messages</em></li><li class='divider'></li>");
-                $("#pm-nav").append("<li><a class='text-center' href='/pm'><strong>View All Conversations</strong><i class='fa fa-angle-right'></i></a></li>");
+                $("#pm-nav").append("<li><a class='text-center' href='/pm'><strong>View All Conversations </strong><i class='fa fa-angle-right'></i></a></li>");
             } else{
-                $("#pm-nav").append("<li><a class='text-center' href='/pm/unread'><strong>View New Messages</strong><i class='fa fa-angle-right'></i></a></li>");
-                $(".notif-count").text(data.length);
-                $(".notif-count").show();
+                $("#pm-nav").append("<li><a class='text-center' href='/pm/unread'><strong>View New Messages </strong><i class='fa fa-angle-right'></i></a></li>");
+                $(".pm-count").text(data.length);
+                $(".pm-count").show();
             }
 
             $('a[href]').unbind("click");
@@ -370,6 +370,37 @@ $(function() {
 
         // initialize datepair
         $("p[data-num='"+optionNumber+"']").datepair();
+    }
+
+    function update_notif(){
+        $(".notif-count").hide();
+        $.post('/list_notif', {}, function (res) {
+            $("#notif-nav").empty();
+            var data = JSON.parse(res);
+            for (var i = 0; i < data.length; i++){
+                $("#notif-nav").append("<li><a  href='/group/"+data[i].g_id+"/"+data[i].t_id+"'><div><i class='fa fa-comment fa-fw'></i> "+data[i].data+"<span class='pull-right text-muted small'>"+data[i].t+"</span></div></a></li>");
+                if (i != data.length - 1)
+                    $("#notif-nav").append("<li class='divider'></li>");
+            }
+
+            if (data.length == 0){
+                $("#notif-nav").append("<li class='text-center'><em style='cursor:default;'>No new notifications</em></li>");
+            } else{
+                $(".notif-count").text(data.length);
+                $(".notif-count").show();
+            }
+
+            $('#notif-nav a[href]').unbind("click");
+
+            $('#notif-nav a[href]').click(function(e) {
+
+                var href = $(this).attr("href");
+                loadContent(href);
+
+                e.preventDefault();
+            });
+
+        });
     }
 
     function newThread(g_id){
@@ -492,6 +523,7 @@ $(function() {
 
         $.post('/get_thrd', {t_id: t_id}, function (res) {
             res = JSON.parse(res);
+            update_notif();
             
             $("#tc-author-init").text(res.f_name.charAt(0).toUpperCase() + res.l_name.charAt(0).toUpperCase());
             $("#tc-author").text(res.f_name + " " + res.l_name);
@@ -508,7 +540,7 @@ $(function() {
 
             if (res.file.length != 0) {
                 for (var i = 0; i < res.file.length; i++){
-                    $("#tc-file").append("<li><a href='/upload/t"+ t_id+ "/" + res.file[i].name+"' target='_blank' >"+res.file[i].name+"</a></li>");
+                    $("#tc-file").append("<li><a href='/upload/t"+ t_id+ "/" + res.file[i].name+"' target='_blank' ><i class='fa fa-download fa-fw'></i>"+res.file[i].name+"</a></li>");
                 }
                 $("#tc-file").closest("div").show();
             }
@@ -561,18 +593,30 @@ $(function() {
         }
     }
 
-    function viewThread(){
+    function viewThread(t_id){
         var threadList = JSON.parse($('#t-current').attr("data-thread"));
-        var currentThread = 0;
 
-        getThread(threadList[currentThread].id);
+        var currentThread = threadList.indexOf(t_id);
+
+        if (currentThread < 0)
+            currentThread = 0;
+
+        $("#t-current").text(currentThread + 1);
+
+        if (currentThread != 0)
+            $('#t-prev').removeClass("disabled");
+
+        if (currentThread != threadList.length - 1)
+            $('#t-next').removeClass("disabled");
+
+        getThread(threadList[currentThread]);
 
         $('#t-prev').click(function () {
             if (currentThread != 0){
                 $('#t-next').removeClass("disabled");
                 currentThread--;
                 $("#t-current").text(currentThread + 1);
-                getThread(threadList[currentThread].id);
+                getThread(threadList[currentThread]);
 
                 if (currentThread == 0){
                     $(this).addClass("disabled");
@@ -585,7 +629,7 @@ $(function() {
                 $('#t-prev').removeClass("disabled");
                 currentThread++;
                 $("#t-current").text(currentThread + 1);
-                getThread(threadList[currentThread].id);
+                getThread(threadList[currentThread]);
 
                 if (currentThread == threadList.length - 1) {
                     $(this).addClass("disabled");
@@ -594,7 +638,7 @@ $(function() {
         });
 
         $('#btn-comment').click(function () {
-            addComment(threadList[currentThread].id);
+            addComment(threadList[currentThread]);
         });
     }
 
@@ -606,6 +650,7 @@ $(function() {
         }
 
         update_pm();
+        update_notif();
         updateGroup();
 
         var addHistory = true;
@@ -666,7 +711,7 @@ $(function() {
                     newThread(input[2]);
 
                     if (!$('#no-thread-info').length)
-                        viewThread();
+                        viewThread(parseInt(input[3]));
 
                     break;
                 }
