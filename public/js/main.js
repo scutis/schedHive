@@ -457,7 +457,7 @@ $(function() {
 
         
 
-        $('#newThread').on('hidden.bs.modal', function () {
+        $('#newThread').on('show.bs.modal', function () {
             optionList = [];
             optionNumber = 0;
 
@@ -519,7 +519,7 @@ $(function() {
                             if (fileList.length == inputFiles.length){
                                 $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
                                     $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
-                                    $('#newThread').trigger('hidden.bs.modal');
+                                    $('#newThread').trigger('show.bs.modal');
                                     $('#t-success').show();
 
                                     $('#newThread').on('hidden.bs.modal', function () {
@@ -535,7 +535,7 @@ $(function() {
                 if (inputFiles.length == 0){
                     $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
                         $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
-                        $('#newThread').trigger('hidden.bs.modal');
+                        $('#newThread').trigger('show.bs.modal');
                         $('#t-success').show();
 
                         $('#newThread').on('hidden.bs.modal', function () {

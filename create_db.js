@@ -4,6 +4,7 @@ var hash = require('./sha');
 var aes = require('./aes');
 var parseCSV = require('csv-parse');
 var fs = require('fs');
+var rmdir = require('rmdir');
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -35,6 +36,7 @@ connection.query('CREATE TABLE notif (id INT unsigned PRIMARY KEY AUTO_INCREMENT
 
 connection.query('CREATE TABLE p_table (id INT unsigned PRIMARY KEY AUTO_INCREMENT, u_from INT unsigned, u_to INT unsigned, data TEXT, u_read INT unsigned, t TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
+rmdir(__dirname + "/public/upload", function (err, dirs, files) {});
 
 fs.readFile(__dirname + '/user_db.csv', {
     encoding: 'utf-8'
