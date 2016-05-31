@@ -457,9 +457,10 @@ $(function() {
 
         
 
-        $('#newThread').on('show.bs.modal', function () {
+        $('#newThread').on('resetThread hidden.bs.modal', function () {
             optionList = [];
             optionNumber = 0;
+            $("#s_group").prop("checked", true);
 
             $("#t-sched p").remove();
 
@@ -517,9 +518,9 @@ $(function() {
                             fileList.push({name: file.name, data: event.target.result});
 
                             if (fileList.length == inputFiles.length){
-                                $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
+                                $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_type: $('input[name="s_options"]:checked').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
                                     $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
-                                    $('#newThread').trigger('show.bs.modal');
+                                    $('#newThread').trigger('resetThread');
                                     $('#t-success').show();
 
                                     $('#newThread').on('hidden.bs.modal', function () {
@@ -533,7 +534,7 @@ $(function() {
                 }
 
                 if (inputFiles.length == 0){
-                    $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
+                    $.post('/new_thrd', {g_id: g_id, title: $('#t-title').val(), data: $('#t-msg').val(), s_type: $('input[name="s_options"]:checked').val(), s_list: JSON.stringify(schedList), f_list: JSON.stringify(fileList)}, function (res) {
                         $('#t-success').text("Thread "+$('#t-title').val()+" successfully created");
                         $('#newThread').trigger('show.bs.modal');
                         $('#t-success').show();
@@ -568,7 +569,7 @@ $(function() {
             $("#tc-sched").hide();
             $("#tc-file").closest("div").hide();
             $("#tc-file").empty();
-            $(".checkbox").remove();
+            $(".pref-list").remove();
 
             if (res.file.length != 0) {
                 for (var i = 0; i < res.file.length; i++){
@@ -580,17 +581,48 @@ $(function() {
             
             if (res.sched.length != 0){
 
+                var sched_label = $("#tc-sched label");
+                var sched_help = $("#tc-sched .help-block");
+
+                if (res.sched[0].s_type == 1) {
+                    sched_label.text("Schedule Meeting (Individual)");
+                    sched_help.text("Select an available time slot");
+                    var pref_type = 'radio';
+                } else {
+                    sched_label.text("Schedule Meeting (Group)");
+                    sched_help.text("Select one or more preferred meeting times");
+                    var pref_type = 'checkbox';
+                }
+
                 for (i = 0; i < res.sched.length; i++){
-                    $("<div class='checkbox' data-tid='"+t_id+"' ><label><input data-id='"+res.sched[i].id+"' type='checkbox'><strong>"+res.sched[i].t_from+"</strong> to <strong>"+res.sched[i].t_to+"</strong> ("+res.sched[i].size+")</label></div>").insertBefore("#btn-pref");
+                    if (res.sched[0].s_type == 0)
+                        $("<div class='"+pref_type+" pref-list' data-tid='"+t_id+"' ><label><input data-id='"+res.sched[i].id+"' type='"+pref_type+"' name='s_prefs'><strong>"+res.sched[i].s_from+"</strong> to <strong>"+res.sched[i].s_to+"</strong> ("+res.sched[i].size+")</label></div>").insertBefore("#btn-pref");
+                    else
+                        $("<div class='" + pref_type + " pref-list' data-tid='" + t_id + "' ><label><input data-id='" + res.sched[i].id + "' type='" + pref_type + "' name='s_prefs'><strong>" + res.sched[i].s_from + "</strong> to <strong>" + res.sched[i].s_to + "</strong> (<a href='/member/" + res.sched[i].u_id + "'>" + res.sched[i].u_id + "</a>)</label></div>").insertBefore("#btn-pref");
 
                     if (res.sched[i].checked)
-                        $(".checkbox input").last().attr('checked', true);
+                        $("."+pref_type+" input").last().attr('checked', true);
+
+                    if (res.sched[i].disabled){
+                        $("."+pref_type+" input").last().attr('disabled', true);
+                        $("."+pref_type+" label").last().attr('style', "cursor:default");
+                    }
                 }
+
+                if (res.sched[0].s_type == 1){
+                    $('.pref-list a[href]').click(function(e) {
+                        var href = $(this).attr("href");
+                        loadContent(href);
+
+                        e.preventDefault();
+                    });
+                }
+
                 $("#tc-sched").show();
 
                 $('#btn-pref').unbind("click");
                 $('#btn-pref').click(function () {
-                    var schedList = $(".checkbox input");
+                    var schedList = $("."+pref_type+" input");
                     var prefList = [];
 
                     for (var i = 0; i < schedList.length; i++) {
@@ -599,8 +631,8 @@ $(function() {
                         }
                     }
 
-                    $.post('/edit_pref', {t_id: parseInt($(".checkbox").attr('data-tid')), prefList: JSON.stringify(prefList)}, function (res) {
-                        getThread(parseInt($(".checkbox").attr('data-tid')));
+                    $.post('/edit_pref', {t_id: parseInt($("."+pref_type+"").attr('data-tid')), prefList: JSON.stringify(prefList)}, function (res) {
+                        getThread(parseInt($("."+pref_type+"").attr('data-tid')));
                         $("#s-success").text("Preferences successfully updated!")
                         $("#s-success").show();
                     });

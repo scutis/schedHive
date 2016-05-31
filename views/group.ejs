@@ -87,7 +87,13 @@
                     </div>
                     <div id="t-sched" class="form-group">
                         <label>Schedule Meeting*</label>
-                        <a id="add-sched" style="cursor:pointer;">Add Option</a>
+                            <label class="radio-inline">
+                                <input type="radio" name="s_options" id="s_group" value="0" checked>Group
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="s_options" id="s_individual" value="1">Individual
+                            </label>
+                        <br><a id="add-sched" style="cursor:pointer;">Add Option</a>
                     </div>
                     <p class="help-block">*optional</p>
                 </form>
@@ -136,8 +142,8 @@
                 <ul id="tc-file" class="list-inline"></ul>
             </div>
             <div id="tc-sched" style="display:none;" class="form-group well well-sm">
-                <label>Schedule Meeting</label>
-                <p class='help-block'>Select one or more preferred meeting times</p>
+                <label></label>
+                <p class='help-block'></p>
                 <button id="btn-pref" class="btn btn-default">Save</button>
                 <div id="s-success" class='alert alert-success' style="display: none; margin-bottom: 0"></div>
             </div>

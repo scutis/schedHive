@@ -117,10 +117,10 @@ router.post('/', function(req, res) {
                     var schedList = [];
 
                     for (var i = 0; i < req.body.s_list.length; i++){
-                        var schedEntry = [result.insertId, new Date (req.body.s_list[i].from), new Date (req.body.s_list[i].to)];
+                        var schedEntry = [result.insertId, parseInt(req.body.s_type), new Date (req.body.s_list[i].from), new Date (req.body.s_list[i].to)];
                         schedList.push(schedEntry);
                     }
-                    connection.query('INSERT INTO t_sched (t_id, t_from, t_to) VALUES ?', [schedList], function (err) {
+                    connection.query('INSERT INTO t_sched (t_id, s_type, s_from, s_to) VALUES ?', [schedList], function (err) {
                         if (err) {
                             connection.release();
                             res.sendStatus(500);

@@ -86,7 +86,7 @@ router.post('/', function(req, res){
             });
 
 
-            connection.query('SELECT id, t_from, t_to FROM t_sched WHERE t_id = ?', [req.body.t_id], function (err, result) {
+            connection.query('SELECT id, s_type, s_from, s_to FROM t_sched WHERE t_id = ?', [req.body.t_id], function (err, result) {
 
                 if (err) {
                     connection.release();
@@ -107,11 +107,11 @@ router.post('/', function(req, res){
                 }
 
                 for (var i = 0; i < result.length; i++){
-                    result[i].t_from = ('0' + result[i].t_from.getDate()).slice(-2) + '/' + ('0' + (result[i].t_from.getMonth()+1)).slice(-2) + '/' + result[i].t_from.getFullYear() + ' ' +
-                        ('0' + (result[i].t_from.getHours())).slice(-2) + ':' + ('0' + (result[i].t_from.getMinutes())).slice(-2);
+                    result[i].s_from = ('0' + result[i].s_from.getDate()).slice(-2) + '/' + ('0' + (result[i].s_from.getMonth()+1)).slice(-2) + '/' + result[i].s_from.getFullYear() + ' ' +
+                        ('0' + (result[i].s_from.getHours())).slice(-2) + ':' + ('0' + (result[i].s_from.getMinutes())).slice(-2);
 
-                    result[i].t_to = ('0' + result[i].t_to.getDate()).slice(-2) + '/' + ('0' + (result[i].t_to.getMonth()+1)).slice(-2) + '/' + result[i].t_to.getFullYear() + ' ' +
-                        ('0' + (result[i].t_to.getHours())).slice(-2) + ':' + ('0' + (result[i].t_to.getMinutes())).slice(-2);
+                    result[i].s_to = ('0' + result[i].s_to.getDate()).slice(-2) + '/' + ('0' + (result[i].s_to.getMonth()+1)).slice(-2) + '/' + result[i].s_to.getFullYear() + ' ' +
+                        ('0' + (result[i].s_to.getHours())).slice(-2) + ':' + ('0' + (result[i].s_to.getMinutes())).slice(-2);
 
                     connection.query('SELECT u_id FROM t_pref WHERE s_id = ?', [result[i].id], function (err, output) {
                         if (err) {
@@ -119,6 +119,10 @@ router.post('/', function(req, res){
                             res.sendStatus(500);
                             return;
                         }
+
+                        result[queryNumber].disabled = false;
+                        result[queryNumber].u_id = "";
+
                         result[queryNumber].size = output.length;
                         result[queryNumber].checked = false;
 
@@ -126,6 +130,11 @@ router.post('/', function(req, res){
                             if (output[i].u_id == req.session.user.id){
                                 result[queryNumber].checked = true;
                             }
+                        }
+
+                        if (result[queryNumber].s_type == 1 && output.length == 1 && output[0].u_id != req.session.user.id){
+                            result[queryNumber].disabled = true;
+                            result[queryNumber].u_id = output[0].u_id;
                         }
 
                         queryNumber++;
@@ -139,6 +148,7 @@ router.post('/', function(req, res){
                                 res.send(JSON.stringify(response));
                             }
                         }
+
                     });
                 }
             });

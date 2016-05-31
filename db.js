@@ -1,5 +1,15 @@
 var mysql = require('mysql');
 
+/*
+var pool = mysql.createPool({
+    connectionLimit : 100,
+    host: 'sql8.freemysqlhosting.net',
+    port: '3306',
+    user: 'sql8121762',
+    password: 'yDTMjHzTbM',
+    database: 'sql8121762'
+});
+*/
 var pool = mysql.createPool({
     connectionLimit : 100,
     host: 'localhost',

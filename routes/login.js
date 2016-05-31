@@ -16,7 +16,7 @@ router.post('/', function(req, res){
         res.redirect('../');
     } else{
         mysql.connect(res, function(connection){
-            connection.query('SELECT id, u_name, hash, salt, f_name, l_name FROM user WHERE u_name = ?', req.body.u_name, function(err, result){
+            connection.query('SELECT id, u_name, hash, salt, n_name, f_name, l_name FROM user WHERE u_name = ?', req.body.u_name, function(err, result){
                 connection.release();
 
                 if (err){

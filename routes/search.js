@@ -7,7 +7,7 @@ router.post('/', function(req, res) {
         var pattern = '%' + mysql.escape(req.body.search) + '%';
 
         mysql.connect(res, function(connection){
-            connection.query('SELECT id, f_name, l_name FROM user WHERE id != ? && (CONCAT(f_name, " ", l_name) LIKE ? || email LIKE ? || n_name LIKE ? || id LIKE ?)', [req.session.user.id, pattern, pattern, pattern, pattern], function (err, result) {
+            connection.query('SELECT id, f_name, l_name FROM user WHERE id != ? && (CONCAT(f_name, " ", l_name) LIKE ? || email LIKE ? || n_name LIKE ? || id LIKE ?) ORDER BY RAND() LIMIT 5', [req.session.user.id, pattern, pattern, pattern, pattern], function (err, result) {
                 connection.release();
 
                 if (err){
@@ -16,7 +16,7 @@ router.post('/', function(req, res) {
                 }
                 var output = [];
 
-                for (var i = 0; i < Math.min(result.length, 5); i++)
+                for (var i = 0; i < result.length; i++)
                     output.push([result[i].id, result[i].f_name, result[i].l_name]);
 
                 res.send(JSON.stringify(output));

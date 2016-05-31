@@ -12,7 +12,8 @@ router.post('/', function(req, res){
 
                 var param = {
                     f_name: req.session.user.f_name,
-                    l_name: req.session.user.l_name
+                    l_name: req.session.user.l_name,
+                    n_name: req.session.user.n_name
                 };
                 res.render('home', param);
 
@@ -21,18 +22,15 @@ router.post('/', function(req, res){
             case 'member':
 
                 mysql.connect(res, function(connection){
-                    connection.query('SELECT f_name, l_name, profile FROM user WHERE id = ?', [req.body.id], function (err, result) {
+                    connection.query('SELECT n_name, f_name, l_name, email, profile FROM user WHERE id = ?', [req.body.id], function (err, result) {
                         connection.release();
                         if (err){
                             res.sendStatus(500);
                             return;
                         }
-                        
-                        
 
-                        var param = {
-                            member: {f_name: result[0].f_name, l_name: result[0].l_name, profile: result[0].profile}
-                        };
+                        var param = {};
+                        param.member = result[0];
 
                         res.render('member', param);
                     });

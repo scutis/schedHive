@@ -1,15 +1,101 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Index</h1>
-
-            <p>Welcome <%= f_name %> <%= l_name %></p>
-            <!-- websocket
-            <script src="/socket.io/socket.io.js"></script>
-            <script>
-                var socket = io.connect(window.location.href);
-            </script>
-            -->
-        </div>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Home</h1>
+        <!-- websocket
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io.connect(window.location.href);
+        </script>
+        -->
     </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3>Welcome to schedHive <%= n_name %>!</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p class="justify">
+                                    <em>schedHive</em> is an application allowing members belonging to a specific organisation to easily <strong>communicate</strong>, <strong>share resources</strong> and <strong>schedule meetings</strong>.
+                                    <br><br>To get started you can either search for existing members, visualise their profile and initiate a private conversation, create a new group to schedule meetings and exchange resources or simply edit your profile.
+                                    <br><br>If you need any help you can always refer to the <strong>How to...</strong> section on the side.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <h3>How to...</h3>
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Search for a member</a>
+                                    </h4>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse collapse in">
+                                    <div class="panel-body justify">The left side navigation menu (collapsible top side if using mobile devices) includes a <strong>search box</strong>.
+                                        Using this tool existing members can be searched using their <strong>name</strong>, <strong>surname</strong>, <strong>nickname</strong>, <strong>email</strong> or <strong>id</strong>.
+                                        <br>As search parameters are provided, the tool suggests matching members which when selected (using mouse or keyboard) redirect the specific member's profile page.
+                                        There it is possible to either visualise their public profile or initiate a private conversation.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Create a group</a>
+                                    </h4>
+                                </div>
+                                <div id="collapseTwo" class="panel-collapse collapse">
+                                    <div class="panel-body justify">
+                                        It is possible to create a group by expanding the <strong>Groups</strong> tab in the side menu and clicking on the <strong>Create Group</strong> button.
+                                        Using the opened form, a new group can be created by entering its name, description and selecting its members.
+                                        <br>Specifically, members are added to the group by searching and selecting them using the provided search field.
+                                        Members can  be removed by clicking on the cross icon and their access level changed by clicking on the number in parenthesis:
+                                        <br><br><em>Level 0:</em> Basic member. Can only participate to existing threads.
+                                        <br><em>Level 1:</em> Moderator. Can participate and create new threads.
+                                        <br><em>Level 2:</em> Administrator. Same as moderator but with the ability also to edit the group (name, description, members).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Schedule meetings</a>
+                                    </h4>
+                                </div>
+                                <div id="collapseThree" class="panel-collapse collapse">
+                                    <div class="panel-body justify">
+                                        Meetings can be scheduled by creating a new thread in an existing group. There are two types of meetings: <strong>group</strong> or <strong>individual</strong>.
+                                        <br><strong>Group meetings</strong> can be scheduled by selecting the appropriate radio button and adding possible time slot options.
+                                        Once a thread with a group meeting is created, all members belonging to the group can add their preferences.
+                                        <br><strong>Individual meetings</strong> instead can be scheduled by selecting the "individual" radio button and adding all available times to meet each member individually.
+                                        Once an individual meeting thread is created, each member can choose their time slot (if available) on a first-come first-served manner.
+                                        It is always possible to pick a different time slot (if available) or switch with other members by contacting them privately.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">Contact other members</a>
+                                    </h4>
+                                </div>
+                                <div id="collapseFour" class="panel-collapse collapse">
+                                    <div class="panel-body justify">
+                                        It is possible to contact either multiple members by creating a new group or individual members using the <strong>private messaging system</strong>.
+                                        <br>To initiate a private conversation, the profile page of the specific member needs to be opened using the provided search tool.
+                                        Then the conversation can be continued from the "Private Messages" link in the side menu.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 </div>

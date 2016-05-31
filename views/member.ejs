@@ -14,7 +14,8 @@
             <!-- /.panel-heading -->
             <div class="panel-body">
                <span class='pm-img pull-left'> <div class="img-circle profile-img"><p><%= member.f_name.charAt(0).toUpperCase() %><%= member.l_name.charAt(0).toUpperCase() %></p></div></span>
-                <h3><%= member.f_name %> <%= member.l_name %></h3>
+                <h3><%= member.f_name %> <%= member.l_name %> (<%= member.n_name %>)</h3>
+                <em>email: <%= member.email %></em><br>
                 <p class="justify"><%= member.profile %></p>
             </div>
             <!-- /.panel-body -->
